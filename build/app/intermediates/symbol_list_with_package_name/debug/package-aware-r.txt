@@ -1,4 +1,4 @@
-com.example.smart_recylcer
+com.example.smartrecycler
 attr activityAction
 attr activityName
 attr alpha
