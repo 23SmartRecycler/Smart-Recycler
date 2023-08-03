@@ -146,13 +146,13 @@
       "languageVersion": "2.14"
     },
     {
-      "name": "smart_recylcer",
+      "name": "smartrecycler",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2023-07-26T09:00:03.590025Z",
+  "generated": "2023-08-03T04:36:46.075915Z",
   "generator": "pub",
   "generatorVersion": "3.0.6"
 }

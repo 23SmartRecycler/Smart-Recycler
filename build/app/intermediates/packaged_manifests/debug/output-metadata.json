@@ -4,7 +4,7 @@
     "type": "PACKAGED_MANIFESTS",
     "kind": "Directory"
   },
-  "applicationId": "com.example.smart_recylcer",
+  "applicationId": "com.example.smartrecycler",
   "variantName": "debug",
   "elements": [
     {
