@@ -1,72 +1,84 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      title: 'Login',
+      home: LogIn(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
+class LogIn extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LogIn> createState() => _LogInState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text('로그인', style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
       ),
-      body: Center(
+      body: Column(
+        children: [
+          Padding(padding: EdgeInsets.only(top: 50)),
+          Form(
+              child: Theme(
+                data: ThemeData(
+                    primaryColor: Colors.grey,
+                    inputDecorationTheme: InputDecorationTheme(
+                        labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0))),
+                child: Container(
+                    padding: EdgeInsets.all(40.0),
+                    // 키보드가 올라와서 만약 스크린 영역을 차지하는 경우 스크롤이 되도록
+                    // SingleChildScrollView으로 감싸 줌
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(labelText: 'Enter email'),
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          TextField(
+                            decoration:
+                            InputDecoration(labelText: 'Enter password'),
+                            keyboardType: TextInputType.text,
+                            obscureText: true, // 비밀번호 안보이도록 하는 것
+                          ),
+                          SizedBox(height: 40.0,),
+                          ButtonTheme(
+                              minWidth: 100.0,
+                              height: 50.0,
+                              child: ElevatedButton(
+                                onPressed: (){
 
-        child: Column(
-       
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+                                },
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 35.0,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orangeAccent
+                                ),
+                              )
+                          )
+                        ],
+                      ),
+                    )),
+              ))
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
