@@ -1,84 +1,82 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartrecycler/login.dart';
+import 'package:smartrecycler/content.dart';
+import 'package:smartrecycler/profile.dart';
+import 'package:smartrecycler/setting.dart';
+import 'package:smartrecycler/sign_up.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Login',
-      home: LogIn(),
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(title: '페이지 목록 (확인용)'),
+
     );
   }
 }
 
-class LogIn extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
   @override
-  State<LogIn> createState() => _LogInState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _LogInState extends State<LogIn> {
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('로그인', style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
-        elevation: 0.0,
-        backgroundColor: Colors.white,
-        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
       ),
-      body: Column(
-        children: [
-          Padding(padding: EdgeInsets.only(top: 50)),
-          Form(
-              child: Theme(
-                data: ThemeData(
-                    primaryColor: Colors.grey,
-                    inputDecorationTheme: InputDecorationTheme(
-                        labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0))),
-                child: Container(
-                    padding: EdgeInsets.all(40.0),
-                    // 키보드가 올라와서 만약 스크린 영역을 차지하는 경우 스크롤이 되도록
-                    // SingleChildScrollView으로 감싸 줌
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          TextField(
-                            decoration: InputDecoration(labelText: 'Enter email'),
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          TextField(
-                            decoration:
-                            InputDecoration(labelText: 'Enter password'),
-                            keyboardType: TextInputType.text,
-                            obscureText: true, // 비밀번호 안보이도록 하는 것
-                          ),
-                          SizedBox(height: 40.0,),
-                          ButtonTheme(
-                              minWidth: 100.0,
-                              height: 50.0,
-                              child: ElevatedButton(
-                                onPressed: (){
+      body: Center(
 
-                                },
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 35.0,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orangeAccent
-                                ),
-                              )
-                          )
-                        ],
-                      ),
-                    )),
-              ))
-        ],
-      ),
+        child: Column(
+
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            UseableIcon(),
+            TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => LogInPage()));}, child: Text('login')),
+            TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ContentPage()));}, child: Text('content')),
+            TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));}, child: Text('profile')),
+            TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));}, child: Text('setting')),
+            TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage()));}, child: Text('sign_up')),
+          ],
+        ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class UseableIcon extends StatelessWidget {
+  const UseableIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: double.infinity, height: 80,
+        child: Column(
+          children: [
+            Container(),
+
+          ],
+        )
     );
   }
 }
