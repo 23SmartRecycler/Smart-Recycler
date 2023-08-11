@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smartrecycler/common/colors.dart';
+import 'package:smartrecycler/findPassword.dart';
+import 'package:smartrecycler/sign_up.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -9,7 +12,6 @@ class LogInPage extends StatelessWidget {
       // debugShowCheckedModeBanner: false,
       // title: 'Login',
       // home: LogIn(),
-      appBar: AppBar(title: Text('LogInPage')),
       body: LogIn(),
     );
   }
@@ -24,15 +26,16 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('로그인', style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
         elevation: 0.0,
         backgroundColor: Colors.white,
         centerTitle: true,
+        automaticallyImplyLeading: false,//자동으로 백버튼 생성 방지
       ),
-      body: Column(
-        children: [
-          Padding(padding: EdgeInsets.only(top: 50)),
+      body: SingleChildScrollView(
+        child:
           Form(
               child: Theme(
                 data: ThemeData(
@@ -40,45 +43,79 @@ class _LogInState extends State<LogIn> {
                     inputDecorationTheme: InputDecorationTheme(
                         labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0))),
                 child: Container(
-                    padding: EdgeInsets.all(40.0),
+                    padding: EdgeInsets.all(16.0),
                     // 키보드가 올라와서 만약 스크린 영역을 차지하는 경우 스크롤이 되도록
                     // SingleChildScrollView으로 감싸 줌
                     child: SingleChildScrollView(
                       child: Column(
-                        children: [
+                        children:<Widget> [
                           TextField(
-                            decoration: InputDecoration(labelText: 'Enter email'),
+                            decoration: InputDecoration(
+                                hintText: '이메일',
+                              hintStyle: TextStyle(color: textHint),
+                              filled: true,
+                              fillColor: textBody,
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(16),//내부 padding값 설정
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(width: 1, color:textBorder),
+                                borderRadius: BorderRadius.circular(8)
+                              ),
+                            ),
                             keyboardType: TextInputType.emailAddress,
+                          ),
+                          Container(
+                              margin: const EdgeInsets.only(bottom: 16)
                           ),
                           TextField(
                             decoration:
-                            InputDecoration(labelText: 'Enter password'),
+                            InputDecoration(
+                                hintText: '비밀번호',
+                              hintStyle: TextStyle(color:textHint),
+                              filled: true,
+                              fillColor: textBody,
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(16),//내부 padding값 설정
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(width: 1,color:textBorder),
+                                borderRadius: BorderRadius.circular(8)
+                              ),
+                            ),
                             keyboardType: TextInputType.text,
                             obscureText: true, // 비밀번호 안보이도록 하는 것
                           ),
-                          SizedBox(height: 40.0,),
+                          SizedBox(height: 132.0,),
                           ButtonTheme(
-                              minWidth: 100.0,
-                              height: 50.0,
+                              padding: EdgeInsets.all(16.0),
                               child: ElevatedButton(
-                                onPressed: (){
-
-                                },
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 35.0,
-                                ),
+                                  onPressed: () {;},
+                                child: Text('로그인'),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orangeAccent
+                                    backgroundColor: mainGreen,
+                                  minimumSize: Size(343, 51),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))
                                 ),
                               )
-                          )
+                          ),
+                          SizedBox(height: 19.0,),
+                          TextButton(onPressed: () {
+                            Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => FindPasswordPage()));},
+                              child: Text('비밀번호 찾기'),
+                            style: TextButton.styleFrom(primary: mainGreen),
+                          ),
+                          SizedBox(height: 10.0,),
+                          TextButton(onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => SignUpPage()));},
+                                child: Text('회원가입'),
+                            style: TextButton.styleFrom(primary: mainGreen),
+                          ),
+
                         ],
                       ),
                     )),
-              ))
-        ],
+              )),
       ),
     );
   }
