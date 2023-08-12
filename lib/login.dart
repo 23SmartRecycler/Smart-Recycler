@@ -26,7 +26,7 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false, // bottom overflowed by pixel 방지 코드
       appBar: AppBar(
         title: Text('로그인', style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
         elevation: 0.0,
@@ -39,7 +39,7 @@ class _LogInState extends State<LogIn> {
           Form(
               child: Theme(
                 data: ThemeData(
-                    primaryColor: Colors.grey,
+                    primaryColor: Colors.white,
                     inputDecorationTheme: InputDecorationTheme(
                         labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0))),
                 child: Container(
@@ -54,7 +54,7 @@ class _LogInState extends State<LogIn> {
                                 hintText: '이메일',
                               hintStyle: TextStyle(color: textHint),
                               filled: true,
-                              fillColor: textBody,
+                              fillColor: gray01,
                               isDense: true,
                               contentPadding: EdgeInsets.all(16),//내부 padding값 설정
                               border: OutlineInputBorder(
@@ -73,7 +73,7 @@ class _LogInState extends State<LogIn> {
                                 hintText: '비밀번호',
                               hintStyle: TextStyle(color:textHint),
                               filled: true,
-                              fillColor: textBody,
+                              fillColor: gray01,
                               isDense: true,
                               contentPadding: EdgeInsets.all(16),//내부 padding값 설정
                               border: OutlineInputBorder(
@@ -93,7 +93,8 @@ class _LogInState extends State<LogIn> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: mainGreen,
                                   minimumSize: Size(343, 51),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                  textStyle: TextStyle(fontFamily: 'Pretendard',fontWeight: FontWeight.w600),
                                 ),
                               )
                           ),
@@ -102,14 +103,14 @@ class _LogInState extends State<LogIn> {
                             Navigator.push(context,
                               MaterialPageRoute(builder: (context) => FindPasswordPage()));},
                               child: Text('비밀번호 찾기'),
-                            style: TextButton.styleFrom(primary: mainGreen),
+                            style: TextButton.styleFrom(primary: mainGreen, textStyle: TextStyle(fontFamily: 'Pretendard',fontWeight: FontWeight.w600),),
                           ),
                           SizedBox(height: 10.0,),
                           TextButton(onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) => SignUpPage()));},
                                 child: Text('회원가입'),
-                            style: TextButton.styleFrom(primary: mainGreen),
+                            style: TextButton.styleFrom(primary: mainGreen, textStyle: TextStyle(fontFamily: 'Pretendard',fontWeight: FontWeight.w600),),
                           ),
 
                         ],
