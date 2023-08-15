@@ -36,6 +36,7 @@ class _GiftExplanationState extends State<GiftExplanation> {
       body: Column(children: [
         Flexible(flex:4, child:ItemImageBox()),
         Flexible(flex:7, child: ItemExplanationBox()),
+        ExchangeButton(),
       ],),
     );
   }
@@ -130,4 +131,85 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
   }
 }
 
+class ExchangeButton extends StatelessWidget {
+  const ExchangeButton({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return  Container(
+      height: 60, margin: EdgeInsets.all(20),
+      decoration: BoxDecoration(color: Colors.green,
+          borderRadius: BorderRadius.circular(90)
+      ),
+      child: TextButton(
+          onPressed: (){showDialog(
+            context: context,
+            builder: (context) {return ExchangeDialog();},
+            barrierDismissible: false ,);
+        },
+        child: Center(
+          child: Text('교환하기',
+              style: TextStyle(fontSize: 20,color: Colors.white, fontWeight: FontWeight.w600,),),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class ExchangeDialog extends StatelessWidget {
+  const ExchangeDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return AlertDialog(
+      content: Container(padding: EdgeInsets.all(10),
+        child:Column(mainAxisSize: MainAxisSize.min,
+          children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text('기프티콘 교환', style: TextStyle(fontSize: 20),),
+          ),
+          Text('4700 포인트로 기프티콘을 \n교환하시겠습니까?',textAlign: TextAlign.center,),
+      ],)),
+      actions: [
+        Column(crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+          /*
+          * 교환하기 버튼
+          * */
+          Container(
+           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            decoration: BoxDecoration(color: Colors.green,
+                borderRadius: BorderRadius.circular(90)
+            ),
+            child: TextButton(
+              onPressed: (){Navigator.pop(context);},
+              child: Center(
+                child: Text('교환하기',
+                  style: TextStyle(fontSize: 20,color: Colors.white, fontWeight: FontWeight.w600,),),
+              ),
+            ),
+          ),
+
+          /*
+          * 취소 버튼
+          * */
+          Container(
+            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: TextButton(
+              onPressed: (){Navigator.pop(context);},
+              child: Center(
+                child: Text('취소',
+                  style: TextStyle(fontSize: 20,color: Colors.green, fontWeight: FontWeight.w600,),),
+              ),
+            ),
+          ),
+
+        ],)
+      ],
+    );
+  }
+}
