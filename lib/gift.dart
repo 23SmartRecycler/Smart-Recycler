@@ -119,7 +119,7 @@ class gifticon extends StatefulWidget {
 class _gifticonState extends State<gifticon> {
   @override
   Widget build(BuildContext context) {
-    return Container(width: double.infinity,height: 800,
+    return Container(width: double.infinity, height: 1000, margin: EdgeInsets.only(left: 10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
         Text('기프티콘',style: TextStyle(fontSize: 20,),),
@@ -167,8 +167,8 @@ class _GridItemsState extends State<GridItems> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,            // 1행에 보여줄 아이템 수
           childAspectRatio: 1/1.3,        // item 의 가로 1, 세로 1 의 비율
-          mainAxisSpacing: 10,          // 수평 padding
-          crossAxisSpacing: 10,         // 수직 padding
+          mainAxisSpacing: 8,          // 수평 padding
+          crossAxisSpacing: 8,         // 수직 padding
         ),
 
         itemCount: GifticonList.length,
@@ -187,7 +187,7 @@ class _GridItemsState extends State<GridItems> {
 * 이미지 클릭 후 상세 페이지로 이동
 * */
   Widget gifticonContainer({String name = "0", String cost = "0"}){
-    return Container(padding: EdgeInsets.all(10),
+    return Container(
       child: Column( crossAxisAlignment: CrossAxisAlignment.start,
         children: [InkWell(
           onTap: (){},

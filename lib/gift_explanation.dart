@@ -33,9 +33,9 @@ class _GiftExplanationState extends State<GiftExplanation> {
         ),
         title: Text('기프티콘',style: TextStyle(color: Colors.white,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
       ),
-      body: Column(children: [
-        Flexible(flex:4, child:ItemImageBox()),
-        Flexible(flex:7, child: ItemExplanationBox()),
+      body: ListView(children: [
+        ItemImageBox(),
+        ItemExplanationBox(),
         ExchangeButton(),
       ],),
     );
@@ -48,11 +48,13 @@ class ItemImageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity, height: 250,
       color: Colors.green,
       child: Container(
-        margin:EdgeInsets.fromLTRB(20, 20, 20, 20),
+        margin:EdgeInsets.all(20),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      )
+        child: Text(''),
+      ),
     );
   }
 }

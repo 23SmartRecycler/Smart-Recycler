@@ -52,6 +52,9 @@ class Grid_box extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
       child: GridView.builder(
+        //그리드 뷰 자동 스크롤 없애기
+        physics: const NeverScrollableScrollPhysics(),
+        
         itemCount: 4,                   // 전체 아이템 수
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,            // 1행에 보여줄 아이템 수
