@@ -1,11 +1,10 @@
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:smartrecycler/common/colors.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:smartrecycler/common/colors.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage
-
   ({super.key});
 
   @override
@@ -24,6 +23,15 @@ class ProfilePage extends StatelessWidget {
   }
 
   class _ProfileState extends State<Profile> {
+
+    var _bottomNavIndex = 0;
+
+    final iconList = <IconData>[
+      Icons.home_filled,
+      Icons.shopping_cart_outlined,
+      Icons.settings,
+      Icons.person
+    ];
   @override
   Widget build(BuildContext context) {
   return Scaffold(
@@ -49,7 +57,7 @@ class ProfilePage extends StatelessWidget {
     child: Stack( // 스택으로 child를 쌓음
       children:<Widget> [
         Container(
-          height: 800,
+          height: 700,
         ),
         Positioned( // positioned로 top 높이에 따라서 child들을 겹치게 배치가 가능하다
             top:0,
@@ -104,12 +112,54 @@ class ProfilePage extends StatelessWidget {
                   fontSize: 50),textAlign: TextAlign.center,),
               progressColor: mainGreen,)
         ),
-
+        const Positioned(
+            top: 650,
+            left: 0,
+            right: 0,
+            child: Text('다음 칭호까지', style: TextStyle(color: Colors.black,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+                fontSize: 16),textAlign: TextAlign.center,)
+        ),
       ],
     ),
   ),
-
-  bottomNavigationBar: BottomAppBar(),
+    floatingActionButton: FloatingActionButton(
+      child: Icon(
+        Icons.center_focus_weak,
+        size: 30,
+        color: Colors.white,
+      ),
+      backgroundColor: mainGreen,
+      onPressed: () {
+      },
+    ),
+    floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+      itemCount: iconList.length,
+      tabBuilder: (int index, bool isActive) {
+        final color = isActive ? activeNavigationBarColor : notActiveNavigationBarColor;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              iconList[index],
+              size: 24,
+              color: color,
+            ),
+            const SizedBox(height: 4),
+          ],
+        );
+      },
+      backgroundColor: Colors.white,
+      activeIndex: _bottomNavIndex,
+      splashColor: activeNavigationBarColor,
+      splashSpeedInMilliseconds: 300,
+      notchSmoothness: NotchSmoothness.softEdge,
+      gapLocation: GapLocation.center,
+      onTap: (index) => setState(() => _bottomNavIndex = index),
+    ),
   );
   }
 }
