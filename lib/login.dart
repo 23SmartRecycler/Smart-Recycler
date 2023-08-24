@@ -63,13 +63,13 @@ class _LogInState extends State<LogIn> {
                           TextField(
                             decoration: InputDecoration(
                                 hintText: '이메일',
-                              hintStyle: TextStyle(color: textHint),
+                              hintStyle: TextStyle(color: gray03),
                               filled: true,
                               fillColor: gray01,
                               isDense: true,
                               contentPadding: EdgeInsets.all(16),//내부 padding값 설정
                               border: OutlineInputBorder(
-                                borderSide: BorderSide(width: 1, color:textBorder),
+                                borderSide: BorderSide(width: 1, color:gray02),
                                 borderRadius: BorderRadius.circular(8)
                               ),
                             ),
@@ -82,13 +82,13 @@ class _LogInState extends State<LogIn> {
                             decoration:
                             InputDecoration(
                                 hintText: '비밀번호',
-                              hintStyle: TextStyle(color:textHint),
+                              hintStyle: TextStyle(color:gray03),
                               filled: true,
                               fillColor: gray01,
                               isDense: true,
                               contentPadding: EdgeInsets.all(16),//내부 padding값 설정
                               border: OutlineInputBorder(
-                                borderSide: BorderSide(width: 1,color:textBorder),
+                                borderSide: BorderSide(width: 1,color:gray02),
                                 borderRadius: BorderRadius.circular(8)
                               ),
                             ),
