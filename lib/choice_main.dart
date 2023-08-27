@@ -29,7 +29,6 @@ class Choice_main extends StatelessWidget {
         //centerTitle: true,
       ),
       body: Grid_box(),
-      bottomNavigationBar: BottomAppBar(),
     );
   }
 }
