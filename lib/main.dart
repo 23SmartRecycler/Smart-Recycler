@@ -27,21 +27,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: '페이지 목록 (확인용)'),
+      home: const MyHomePage(),
 
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key,});
 
-  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -58,15 +56,28 @@ class _MyHomePageState extends State<MyHomePage> {
     Icons.person
   ];
 
+  static List<Widget> pages = <Widget>[
+    ContentPage(),
+    GiftPage(),
+    SettingPage(),
+    ProfilePage(),
+  ];
+
+  void _onTap(int index) {
+    setState(() {
+      _bottomNavIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
       ),
-      body: Container(
+      body: //pages[_bottomNavIndex], 바텀 네비게이션 구현함. 실행하려면 아래 container 코드만 지우고 pages[] 주석 해제하면 됨
+      Container(
         padding: EdgeInsets.all(5),
         child: Column(
           children: <Widget>[
@@ -83,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: mainGreen,
         onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChoicePage()));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -109,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
         splashSpeedInMilliseconds: 300,
         notchSmoothness: NotchSmoothness.softEdge,
         gapLocation: GapLocation.center,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
+        onTap: _onTap,
       ),// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
