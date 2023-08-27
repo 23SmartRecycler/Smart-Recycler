@@ -87,7 +87,7 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
                       padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
                     child: Text('상품명', style: TextStyle(fontSize: 18))
                   ),),
-               Text('기프티콘 이름'),
+                Text('기프티콘 이름'),
               ],
             ),
           ),
@@ -138,23 +138,26 @@ class ExchangeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-      height: 60, margin: EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.green,
-          borderRadius: BorderRadius.circular(90)
-      ),
-      child: TextButton(
-          onPressed: (){showDialog(
-            context: context,
-            builder: (context) {return ExchangeDialog();},
-            barrierDismissible: false ,);
-        },
-        child: Center(
-          child: Text('교환하기',
-              style: TextStyle(fontSize: 20,color: Colors.white, fontWeight: FontWeight.w600,),),
+    return Padding(
+        padding: const EdgeInsets.all(20),
+
+        child: ButtonTheme(
+          child: ElevatedButton(
+            onPressed: (){showDialog(
+                context: context,
+                builder: (context) {return ExchangeDialog();},
+                barrierDismissible: false ,);
+            },
+            child: Text('교환하기',style: TextStyle(fontSize: 18,color: Colors.white, fontWeight: FontWeight.w600,),),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              minimumSize: Size(343, 51),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              textStyle: TextStyle(fontFamily: 'Pretendard',fontWeight: FontWeight.w600),
+            ),
+          )
         ),
-      ),
-    );
+      );
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartrecycler/gift_explanation.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class GiftPage extends StatelessWidget {
@@ -190,7 +191,12 @@ class _GridItemsState extends State<GridItems> {
     return Container(
       child: Column( crossAxisAlignment: CrossAxisAlignment.start,
         children: [InkWell(
-          onTap: (){},
+          onTap: () {
+            Navigator.push(context,
+              MaterialPageRoute(
+                builder: (context) => GiftExplanationPage())
+            );
+          },
           child: Container(
             width: 100, height: 100,
             margin: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
