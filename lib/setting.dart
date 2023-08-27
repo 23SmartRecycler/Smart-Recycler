@@ -23,22 +23,17 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
 
-  var _bottomNavIndex = 0;
-
-  final iconList = <IconData>[
-    Icons.home_filled,
-    Icons.shopping_cart_outlined,
-    Icons.settings,
-    Icons.person
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false, // bottom overflowed by pixel 방지 코드
       appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white, //뒤로가기 버튼 색상
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);//뒤로가기
+          },
+          color: Colors.white,
         ),
           title: Text('설정', style: TextStyle(color: Colors.white,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
           elevation: 0.0,
@@ -79,42 +74,6 @@ class _SettingState extends State<Setting> {
           ),
         )
     ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.center_focus_weak,
-          size: 30,
-          color: Colors.white,
-        ),
-        backgroundColor: mainGreen,
-        onPressed: () {
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive ? activeNavigationBarColor : notActiveNavigationBarColor;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                iconList[index],
-                size: 24,
-                color: color,
-              ),
-              const SizedBox(height: 4),
-            ],
-          );
-        },
-        backgroundColor: Colors.white,
-        activeIndex: _bottomNavIndex,
-        splashColor: activeNavigationBarColor,
-        splashSpeedInMilliseconds: 300,
-        notchSmoothness: NotchSmoothness.softEdge,
-        gapLocation: GapLocation.center,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
-      ),
     );
   }
 }
