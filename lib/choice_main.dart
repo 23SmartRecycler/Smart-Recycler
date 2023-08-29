@@ -29,7 +29,6 @@ class Choice_main extends StatelessWidget {
         //centerTitle: true,
       ),
       body: Grid_box(),
-      bottomNavigationBar: BottomAppBar(),
     );
   }
 }
@@ -66,7 +65,8 @@ class Grid_box extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return InkWell( // 클릭하면 애니매이션 효과 나옴(필요없으면 GestureDetector사용)
 
-            onTap:() {},  //클릭했을 때 해당 카메라 촬영(detection)으로 이동해야 함
+            onTap:() {
+            },  //클릭했을 때 해당 카메라 촬영(detection)으로 이동해야 함
 
             child: Container(
               padding: EdgeInsets.all(10),
