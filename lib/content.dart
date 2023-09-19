@@ -147,7 +147,7 @@ class ContentPage extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.only(top: 12,bottom:12),
-              height: 200,
+              height: 400,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
