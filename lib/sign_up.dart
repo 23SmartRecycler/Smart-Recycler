@@ -1,10 +1,14 @@
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrecycler/common/colors.dart';
-import 'common/colors.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+
+import 'UserPage/User.dart';
+import 'UserPage/UserRepository.dart';
 import 'findPassword.dart';
 
 bool _isChecked=false;
+
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
 
@@ -27,6 +31,16 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignupState extends State<SignUp> {
+  late final UserRepository _UserRepository;
+
+  @override
+  void initState() {
+    Dio dio = Dio();
+
+    _UserRepository = UserRepository(dio);
+
+    super.initState();
+  }
 
   var _bottomNavIndex = 0;
 
@@ -36,6 +50,12 @@ class _SignupState extends State<SignUp> {
     Icons.settings,
     Icons.person
   ];
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +80,11 @@ class _SignupState extends State<SignUp> {
                   // 키보드가 올라와서 만약 스크린 영역을 차지하는 경우 스크롤이 되도록
                   // SingleChildScrollView으로 감싸 줌
                   child: SingleChildScrollView(
+                    key: _formKey,
                     child: Column(
                       children:<Widget> [
-                        TextField(
+                        TextFormField(
+                          controller: _nameController,
                           decoration: InputDecoration(
                             hintText: '이름',
                             hintStyle: TextStyle(color: gray03),
@@ -78,7 +100,8 @@ class _SignupState extends State<SignUp> {
                           keyboardType: TextInputType.name,
                         ),
                         SizedBox(height: 16,),
-                        TextField(
+                        TextFormField(
+                          controller: _emailController,
                           decoration: InputDecoration(
                             hintText: '이메일',
                             hintStyle: TextStyle(color: gray03),
@@ -92,9 +115,16 @@ class _SignupState extends State<SignUp> {
                             ),
                           ),
                           keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value==null || value.isEmpty) {
+                              return "이메일을 입력해주세요";
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: 16,),
-                        TextField(
+                        TextFormField(
+                          controller: _passwordController,
                           decoration:
                           InputDecoration(
                             hintText: '비밀번호',
@@ -109,6 +139,12 @@ class _SignupState extends State<SignUp> {
                             ),
                           ),
                           keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value==null || value.isEmpty) {
+                              return "비밀번호을 입력해주세요";
+                            }
+                            return null;
+                          },
                           obscureText: true, // 비밀번호 안보이도록 하는 것
                         ),
                         SizedBox(height: 32.0,),
@@ -139,7 +175,7 @@ class _SignupState extends State<SignUp> {
                         ButtonTheme(
                             padding: EdgeInsets.all(16.0),
                             child: ElevatedButton(
-                              onPressed: () {;},
+                              onPressed: () {_register();},
                               child: Text('회원가입'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: mainGreen,
@@ -202,5 +238,19 @@ class _SignupState extends State<SignUp> {
 
     );
   }
+
+  //회원가입 하는 메소드
+  void _register() async {
+    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0);
+    _UserRepository.createUser(user);
+
+    if (user == null) {
+      final snacBar = SnackBar(
+        content: Text("Please try again later"),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snacBar);
+    }
+  }
+
 }
 
