@@ -9,7 +9,6 @@ class GiftPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: gift(),
-      bottomNavigationBar: BottomAppBar(),
     );
   }
 }
