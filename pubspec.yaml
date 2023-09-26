@@ -16,7 +16,7 @@ dependencies:
   flutter_native_splash: ^2.2.10+1
   retrofit: ">=3.0.0 <4.0.0"
   build_runner: ^2.1.10
-  json_annotation: ^4.0.1
+  json_annotation: ^4.8.1
   json_serializable: ">4.4.0"
   
   # progress bar 사용하기 위한 dependency 추가
