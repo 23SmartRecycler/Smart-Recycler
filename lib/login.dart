@@ -25,6 +25,11 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   var _bottomNavIndex = 0;
 
   final iconList = <IconData>[
@@ -165,5 +170,8 @@ class _LogInState extends State<LogIn> {
         onTap: (index) => setState(() => _bottomNavIndex = index),
       ),
     );
+  }
+  void login(){
+
   }
 }

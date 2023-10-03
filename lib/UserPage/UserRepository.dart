@@ -6,7 +6,7 @@ import 'package:smartrecycler/UserPage/User.dart';
 
 part 'UserRepository.g.dart';
 
-@RestApi(baseUrl: 'http://192.168.45.253:8080/v1/')
+@RestApi(baseUrl: 'http://192.168.45.235:8080/v1/')
 abstract class UserRepository {
   factory UserRepository(Dio dio, {String? baseUrl}) =
   _UserRepository;
@@ -20,7 +20,7 @@ abstract class UserRepository {
   @GET('user/login/{email}/{password}')
   Future login(@Path('email') String email, @Path('password') String password );
 
-  @GET('user/login/{email}/{profileName}')
+  @GET('user/password/{email}/{profileName}')
   Future getPassword(@Path('email') String email, @Path('profileName') String profileName );
 
   @GET('user/duplicate/email/{email}')
