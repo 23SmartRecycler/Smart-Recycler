@@ -1,7 +1,10 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
 import 'package:smartrecycler/common/colors.dart';
+import 'package:smartrecycler/login.dart';
 
 import 'UserPage/User.dart';
 import 'UserPage/UserRepository.dart';
@@ -175,7 +178,7 @@ class _SignupState extends State<SignUp> {
                         ButtonTheme(
                             padding: EdgeInsets.all(16.0),
                             child: ElevatedButton(
-                              onPressed: () {_register();},
+                              onPressed: () {checkDuplicate();},
                               child: Text('회원가입'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: mainGreen,
@@ -243,13 +246,42 @@ class _SignupState extends State<SignUp> {
   void _register() async {
     final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0);
     _UserRepository.createUser(user);
-
     if (user == null) {
       final snacBar = SnackBar(
         content: Text("Please try again later"),
       );
       ScaffoldMessenger.of(context).showSnackBar(snacBar);
     }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => LogInPage()));
+    showToast();
+  }
+
+  void showToast(){
+    Fluttertoast.showToast(
+        msg: '로그인 성공하였습니다.',
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: Colors.grey,
+    fontSize: 20,
+    textColor: Colors.white,
+    toastLength: Toast.LENGTH_SHORT);
+  }
+  Future<void> checkDuplicate() async {
+    var logger =Logger();
+    String email = _emailController.text;
+    final check= await _UserRepository.checkDuplicateLoginId(email);
+    if(check){
+      _register();
+    }else{
+      Fluttertoast.showToast(
+          msg: '중복된 이메일 입니다.',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }
+
+
   }
 
 }

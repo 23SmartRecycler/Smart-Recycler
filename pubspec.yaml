@@ -18,6 +18,8 @@ dependencies:
   build_runner: ^2.1.10
   json_annotation: ^4.8.1
   json_serializable: ">4.4.0"
+  fluttertoast: ^8.0.8
+  logger: ^2.0.2+1
   
   # progress bar 사용하기 위한 dependency 추가
   step_progress_indicator: ^1.0.2
