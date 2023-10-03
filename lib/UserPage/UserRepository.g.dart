@@ -13,7 +13,7 @@ class _UserRepository implements UserRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://192.168.45.253:8080/v1/';
+    baseUrl ??= 'http://192.168.45.235:8080/v1/';
   }
 
   final Dio _dio;
@@ -105,7 +105,7 @@ class _UserRepository implements UserRepository {
     )
         .compose(
           _dio.options,
-          'user/login/${email}/${profileName}',
+          'user/password/${email}/${profileName}',
           queryParameters: queryParameters,
           data: _data,
         )
