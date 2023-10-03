@@ -86,7 +86,9 @@ class _UserRepository implements UserRepository {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!.cast<Long>();
+    var value = _result.data!
+        .map((dynamic i) => Long.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
@@ -112,7 +114,9 @@ class _UserRepository implements UserRepository {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!.cast<Bool>();
+    var value = _result.data!
+        .map((dynamic i) => Bool.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
@@ -135,7 +139,9 @@ class _UserRepository implements UserRepository {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!.cast<Bool>();
+    var value = _result.data!
+        .map((dynamic i) => Bool.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
@@ -162,7 +168,9 @@ class _UserRepository implements UserRepository {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!.cast<Bool>();
+    var value = _result.data!
+        .map((dynamic i) => Bool.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
