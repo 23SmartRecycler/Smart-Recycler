@@ -21,7 +21,7 @@ class _GifticonRepository implements GifticonRepository {
   String? baseUrl;
 
   @override
-  Future<String> create(gifticon) async {
+  Future<String> createGifticon(gifticon) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
