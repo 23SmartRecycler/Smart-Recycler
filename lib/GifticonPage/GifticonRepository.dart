@@ -11,7 +11,7 @@ abstract class GifticonRepository{
   factory GifticonRepository(Dio dio, {String? baseUrl}) = _GifticonRepository;
 
   @POST('gifticons/new')
-  Future<String> create(@Body()GifticonItem gifticon);
+  Future<String> createGifticon(@Body()GifticonItem gifticon);
 
   @GET('/gifticons')
   Future<List<GifticonItem>> list();
