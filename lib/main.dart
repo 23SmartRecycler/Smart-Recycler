@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:smartrecycler/choice_main.dart';
 import 'package:smartrecycler/gift.dart';
 import 'package:smartrecycler/gift_explanation.dart';
-import 'package:smartrecycler/login.dart';
+import 'package:smartrecycler/UserPage/login.dart';
 import 'package:smartrecycler/content.dart';
 import 'package:smartrecycler/profile.dart';
 import 'package:smartrecycler/result.dart';
 import 'package:smartrecycler/search.dart';
 import 'package:smartrecycler/search_result.dart';
 import 'package:smartrecycler/setting.dart';
-import 'package:smartrecycler/sign_up.dart';
+import 'package:smartrecycler/UserPage/sign_up.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:smartrecycler/common/colors.dart';
 
@@ -145,12 +145,15 @@ class Pages extends StatelessWidget {
         Text('혁준'),
         Row(children: [
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ChoicePage()));}, child: Text('Choice')),
+ //         TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => DetectionPage()));}, child: Text('Detection')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftPage()));}, child: Text('Gift')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftExplanationPage()));}, child: Text('GiftEx')),
+//          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftExplanationButtonClickPage()));}, child: Text('GiftExBC')),
         ],),
         Text('민수'),
         Row(children: [
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage()));}, child: Text('Result')),
+//          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultDetailPage()));}, child: Text('ResultDetail')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));}, child: Text('Search')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultPage()));}, child: Text('SearchResult')),
         ],),

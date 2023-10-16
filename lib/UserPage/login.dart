@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartrecycler/common/colors.dart';
-import 'package:smartrecycler/findPassword.dart';
-import 'package:smartrecycler/sign_up.dart';
+import 'package:smartrecycler/content.dart';
+import 'package:smartrecycler/UserPage/findPassword.dart';
+import 'package:smartrecycler/UserPage/sign_up.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+
+import 'userRetrofit/UserRepository.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -24,6 +29,16 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
+  late final UserRepository _UserRepository;
+
+  @override
+  void initState() {
+    Dio dio = Dio();
+
+    _UserRepository = UserRepository(dio);
+
+    super.initState();
+  }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -63,9 +78,11 @@ class _LogInState extends State<LogIn> {
                     // 키보드가 올라와서 만약 스크린 영역을 차지하는 경우 스크롤이 되도록
                     // SingleChildScrollView으로 감싸 줌
                     child: SingleChildScrollView(
+                      key: _formKey,
                       child: Column(
                         children:<Widget> [
                           TextField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                                 hintText: '이메일',
                               hintStyle: TextStyle(color: gray03),
@@ -84,6 +101,7 @@ class _LogInState extends State<LogIn> {
                               margin: const EdgeInsets.only(bottom: 16)
                           ),
                           TextField(
+                            controller: _passwordController,
                             decoration:
                             InputDecoration(
                                 hintText: '비밀번호',
@@ -104,7 +122,7 @@ class _LogInState extends State<LogIn> {
                           ButtonTheme(
                               padding: EdgeInsets.all(16.0),
                               child: ElevatedButton(
-                                  onPressed: () {;},
+                                  onPressed: () {login();},
                                 child: Text('로그인'),
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: mainGreen,
@@ -171,7 +189,25 @@ class _LogInState extends State<LogIn> {
       ),
     );
   }
-  void login(){
-
+  void login() async {
+    final login = await  _UserRepository.login(_emailController.text, _passwordController.text);
+    if(login==-1){
+      Fluttertoast.showToast(
+          msg: '이메일 혹은 비밀번호가 일치하지 않습니다.',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }else{
+      Fluttertoast.showToast(
+          msg: '로그인 성공\n 환영합니다!',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Content(uid: login,)));
+    }
   }
 }
