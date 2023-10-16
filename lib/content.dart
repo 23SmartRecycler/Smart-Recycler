@@ -1,7 +1,12 @@
 import 'package:anim_search_bar/anim_search_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:smartrecycler/search.dart';
+import 'package:smartrecycler/setting.dart';
 import 'package:transformable_list_view/transformable_list_view.dart';
+import 'UserPage/userRetrofit/User.dart';
+import 'UserPage/userRetrofit/UserRepository.dart';
 import 'common/colors.dart';
 
 class ContentPage extends StatelessWidget {
@@ -10,13 +15,14 @@ class ContentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Content(),
+      body: Content(uid: 0,),
     );
   }
 }
 
   class Content extends StatefulWidget {
-  const Content({Key? key}) : super(key: key);
+  final int uid;
+  const Content({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<Content> createState() => _ContentState();
@@ -24,6 +30,19 @@ class ContentPage extends StatelessWidget {
 
   class _ContentState extends State<Content> {
 
+    late final UserRepository _UserRepository;
+
+    String profileName='';
+
+    @override
+    void initState() {
+      Dio dio = Dio();
+
+      _UserRepository = UserRepository(dio);
+      findUser();
+
+      super.initState();
+    }
     Matrix4 getScaleDownMatrix(TransformableListItem item) {
       /// final scale of child when the animation is completed
       const endScaleBound = 0.3;
@@ -88,6 +107,33 @@ class ContentPage extends StatelessWidget {
     body: SingleChildScrollView(
       child: Column(
           children: <Widget>[
+            FutureBuilder(
+              future: findUser(),
+                builder: (BuildContext context, AsyncSnapshot snapshot){
+                  if (snapshot.hasData == false) {
+                    return const CircularProgressIndicator();
+                  }
+                  else if (snapshot.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    );
+                  }
+                  else{
+                    return Container(
+                        margin: const EdgeInsets.all(12),
+                        alignment: Alignment.bottomLeft,
+                        child: Text(snapshot.data+"님 환영합니다", style: TextStyle(color: Colors.black,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 24),)
+                    );
+                  }
+                }
+            ),
             Container(
               margin: EdgeInsets.all(12),
               child:AnimSearchBar(
@@ -163,16 +209,16 @@ class ContentPage extends StatelessWidget {
                       vertical: 4,
                     ),
                   ),
-                  Container(
-                    height: 170,
-                    width: 130,
-                    color: mainGreen,
-                    child:const Center(
-                        child:Text('2번 이야기')
-                    ),
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 4,
+                  TextButton(onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Setting(uid: widget.uid,)));
+                  },child:const Center(
+                      child:Text('2번 이야기')
+                  ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: mainGreen,
+                      minimumSize: Size(130,170),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      textStyle: TextStyle(fontFamily: 'Pretendard',fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
@@ -183,5 +229,9 @@ class ContentPage extends StatelessWidget {
       ),
     ),
   );
+    }
+    Future<String?> findUser() async {
+    final User user = await _UserRepository.getUser(widget.uid);
+    return user.profileName;
     }
   }
