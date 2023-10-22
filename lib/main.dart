@@ -1,18 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartrecycler/UserPage/login.dart';
+import 'package:smartrecycler/UserPage/sign_up.dart';
 import 'package:smartrecycler/choice_main.dart';
+import 'package:smartrecycler/ContentPage/ContentPage.dart';
 import 'package:smartrecycler/gift.dart';
 import 'package:smartrecycler/gift_explanation.dart';
-import 'package:smartrecycler/UserPage/login.dart';
-import 'package:smartrecycler/content.dart';
 import 'package:smartrecycler/profile.dart';
 import 'package:smartrecycler/result.dart';
 import 'package:smartrecycler/search.dart';
 import 'package:smartrecycler/search_result.dart';
 import 'package:smartrecycler/setting.dart';
-import 'package:smartrecycler/UserPage/sign_up.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:smartrecycler/common/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,32 +40,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  var _bottomNavIndex = 0;
-
-  final iconList = <IconData>[
-    Icons.home_filled,
-    Icons.shopping_cart_outlined,
-    Icons.settings,
-    Icons.person
-  ];
-
-  static List<Widget> pages = <Widget>[
-    ContentPage(),
-    GiftPage(),
-    SettingPage(),
-    ProfilePage(),
-  ];
-
-  void _onTap(int index) {
-    setState(() {
-      _bottomNavIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -83,43 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.center_focus_weak,
-          size: 30,
-          color: Colors.white,
-        ),
-        backgroundColor: mainGreen,
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChoicePage()));
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive ? activeNavigationBarColor : notActiveNavigationBarColor;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                iconList[index],
-                size: 24,
-                color: color,
-              ),
-              const SizedBox(height: 4),
-            ],
-          );
-        },
-        backgroundColor: Colors.white,
-        activeIndex: _bottomNavIndex,
-        splashColor: activeNavigationBarColor,
-        splashSpeedInMilliseconds: 300,
-        notchSmoothness: NotchSmoothness.softEdge,
-        gapLocation: GapLocation.center,
-        onTap: _onTap,
-      ),// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
