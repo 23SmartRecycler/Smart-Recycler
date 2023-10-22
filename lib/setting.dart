@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 import 'package:smartrecycler/UserPage/changePassword.dart';
-import 'package:smartrecycler/common/colors.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:smartrecycler/UserPage/login.dart';
+import 'package:smartrecycler/common/colors.dart';
 
 import 'UserPage/userRetrofit/UserRepository.dart';
 
@@ -32,6 +31,8 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
 
   late final UserRepository _UserRepository;
+  static final storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic userInfo = '';
 
   @override
   void initState() {
@@ -39,7 +40,21 @@ class _SettingState extends State<Setting> {
 
     _UserRepository = UserRepository(dio);
 
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+
     super.initState();
+  }
+
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    userInfo = await storage.read(key:'login');
+    if (userInfo != null) {
+      return userInfo;
+    }
   }
 
   @override
@@ -66,6 +81,7 @@ class _SettingState extends State<Setting> {
           color: gray01,
           child: Column(
             children: <Widget>[
+
               Row(
                 children: [
                   Icon(Icons.person_outline),
@@ -105,7 +121,9 @@ class _SettingState extends State<Setting> {
   }
   void deleteUser()async {
     try{
-      final delete = await _UserRepository.deleteUser(widget.uid);
+      int uid = int.parse(await _asyncMethod());
+      final delete = await _UserRepository.deleteUser(uid);
+      await storage.delete(key: 'login');
       Fluttertoast.showToast(
           msg: '회원탈퇴 성공! 감사합니다.',
           gravity: ToastGravity.BOTTOM,

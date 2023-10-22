@@ -268,7 +268,7 @@ class _SignupState extends State<SignUp> {
 
   void showToast(){
     Fluttertoast.showToast(
-        msg: '로그인 성공하였습니다.',
+        msg: '회원가입에 성공하였습니다.',
     gravity: ToastGravity.BOTTOM,
     backgroundColor: Colors.grey,
     fontSize: 20,

@@ -1,13 +1,12 @@
-import 'dart:ffi';
-
-import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
+import 'package:retrofit/retrofit.dart';
 import 'package:smartrecycler/UserPage/userRetrofit/User.dart';
+import 'package:smartrecycler/common/TaskServer.dart';
 
 part 'UserRepository.g.dart';
 
 
-@RestApi(baseUrl: 'http://192.168.45.253:8080/v1/')
+@RestApi(baseUrl: serverUrl)
 
 abstract class UserRepository {
   factory UserRepository(Dio dio, {String? baseUrl}) =
