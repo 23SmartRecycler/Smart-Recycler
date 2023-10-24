@@ -13,7 +13,7 @@ class _UserRepository implements UserRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://192.168.45.235:8080/v1/';
+    baseUrl ??= 'http://203.249.77.25:8080/v1/';
   }
 
   final Dio _dio;

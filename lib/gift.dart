@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smartrecycler/gift_explanation.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
+import 'GifticonPage/GifticonRepository.dart';
+
 class GiftPage extends StatelessWidget {
   const GiftPage({super.key});
 
@@ -31,6 +33,7 @@ class _giftState extends State<gift> {
           ),
         ),
         title: Text('교환하기',style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
+        actions: [TextButton(onPressed: (){}, child: Text('추가 하기',style: TextStyle(color: Colors.green,),))],
       ),
       body: ListView(//mainAxisAlignment: MainAxisAlignment.start,
             //crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,6 +136,8 @@ class _gifticonState extends State<gifticon> {
 * json 형식의 기프티콘 정보
 * ++++++++++++++++++++ img 정보 추가해야함.
 * */
+
+
 final GifticonList = [
   {"name": "1", "cost": "100"},
   {"name": "2", "cost": "200"},
@@ -159,6 +164,8 @@ class GridItems extends StatefulWidget {
 class _GridItemsState extends State<GridItems> {
   @override
   Widget build(BuildContext context) {
+    late final GifticonRepository gifticonRepository;
+
     return Expanded(
       child: GridView.builder(
         //그리드 뷰 자동 스크롤 없애기
