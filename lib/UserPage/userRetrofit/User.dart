@@ -9,8 +9,9 @@ class User {
   final String? profileName;
   final int? point;
   final int? exp;
+  final String? profileImage;
 
-  User({required this.email, required this.password, required this.profileName, required this.point, required this.exp});
+  User({required this.email, required this.password, required this.profileName, required this.point, required this.exp,required this.profileImage});
 
   factory User.fromJson(Map<String, dynamic> json) =>_$UserFromJson(json);
 

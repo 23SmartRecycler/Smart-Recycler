@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smartrecycler/ContentPage/contentRetrofit/Content.dart';
 import 'package:smartrecycler/ContentPage/contentRetrofit/ContentRepository.dart';
-import 'package:smartrecycler/search.dart';
+import 'package:smartrecycler/SearchPage/search.dart';
 import 'package:transformable_list_view/transformable_list_view.dart';
 
 import '../UserPage/userRetrofit/User.dart';
