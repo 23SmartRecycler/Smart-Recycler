@@ -254,7 +254,7 @@ class _SignupState extends State<SignUp> {
 
   //회원가입 하는 메소드
   void _register() async {
-    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0);
+    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0,profileImage: "");
     _UserRepository.createUser(user);
     if (user == null) {
       final snacBar = SnackBar(

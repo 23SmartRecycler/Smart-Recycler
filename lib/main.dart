@@ -7,8 +7,8 @@ import 'package:smartrecycler/gift.dart';
 import 'package:smartrecycler/gift_explanation.dart';
 import 'package:smartrecycler/profile.dart';
 import 'package:smartrecycler/result.dart';
-import 'package:smartrecycler/search.dart';
-import 'package:smartrecycler/search_result.dart';
+import 'package:smartrecycler/SearchPage/search.dart';
+import 'package:smartrecycler/SearchPage/search_result.dart';
 import 'package:smartrecycler/setting.dart';
 
 void main() {
