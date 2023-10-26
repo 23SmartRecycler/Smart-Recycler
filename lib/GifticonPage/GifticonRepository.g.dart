@@ -13,7 +13,7 @@ class _GifticonRepository implements GifticonRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://203.249.77.25:8080//v1/';
+    baseUrl ??= 'http://203.249.77.25:8080/v1/';
   }
 
   final Dio _dio;

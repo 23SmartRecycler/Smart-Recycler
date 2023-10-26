@@ -149,7 +149,6 @@ final GifticonList = [
   {"name": "8", "cost": "800"},
   {"name": "9", "cost": "900"},
 ];
-
 /*
 * 기프티콘 정보를 받아서 그리드를 만드는 위젯
 * 기프티콘 정보 = {name, cost}
@@ -164,7 +163,6 @@ class GridItems extends StatefulWidget {
 class _GridItemsState extends State<GridItems> {
   @override
   Widget build(BuildContext context) {
-    late final GifticonRepository gifticonRepository;
 
     return Expanded(
       child: GridView.builder(
