@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 import 'package:smartrecycler/common/colors.dart';
-import 'package:smartrecycler/login.dart';
+import 'package:smartrecycler/UserPage/login.dart';
 
-import 'UserPage/User.dart';
-import 'UserPage/UserRepository.dart';
+import 'userRetrofit/User.dart';
+import 'userRetrofit/UserRepository.dart';
 import 'findPassword.dart';
 
-bool _isChecked=false;
+
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -46,6 +46,7 @@ class _SignupState extends State<SignUp> {
   }
 
   var _bottomNavIndex = 0;
+  bool _isChecked=false;
 
   final iconList = <IconData>[
     Icons.home_filled,
@@ -118,12 +119,6 @@ class _SignupState extends State<SignUp> {
                             ),
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value==null || value.isEmpty) {
-                              return "이메일을 입력해주세요";
-                            }
-                            return null;
-                          },
                         ),
                         SizedBox(height: 16,),
                         TextFormField(
@@ -142,12 +137,6 @@ class _SignupState extends State<SignUp> {
                             ),
                           ),
                           keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value==null || value.isEmpty) {
-                              return "비밀번호을 입력해주세요";
-                            }
-                            return null;
-                          },
                           obscureText: true, // 비밀번호 안보이도록 하는 것
                         ),
                         SizedBox(height: 32.0,),
@@ -178,7 +167,28 @@ class _SignupState extends State<SignUp> {
                         ButtonTheme(
                             padding: EdgeInsets.all(16.0),
                             child: ElevatedButton(
-                              onPressed: () {checkDuplicate();},
+                              onPressed: () {
+                                if(!_isChecked){
+                                  Fluttertoast.showToast(
+                                      msg: '개인정보 수집 및 이용에 동의해주시길 바랍니다.',
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.grey,
+                                      fontSize: 20,
+                                      textColor: Colors.white,
+                                      toastLength: Toast.LENGTH_SHORT);
+                                }
+                                else if(_nameController.text.isEmpty||_passwordController.text.isEmpty||_emailController.text.isEmpty){
+                                  Fluttertoast.showToast(
+                                      msg: '이름, 이메일, 비밀번호 모두 입력해주시길 바랍니다.',
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.grey,
+                                      fontSize: 20,
+                                      textColor: Colors.white,
+                                      toastLength: Toast.LENGTH_SHORT);
+                                }
+                                else{
+                                  checkDuplicate();
+                                }},
                               child: Text('회원가입'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: mainGreen,
@@ -244,7 +254,7 @@ class _SignupState extends State<SignUp> {
 
   //회원가입 하는 메소드
   void _register() async {
-    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0);
+    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0,profileImage: "");
     _UserRepository.createUser(user);
     if (user == null) {
       final snacBar = SnackBar(
@@ -258,7 +268,7 @@ class _SignupState extends State<SignUp> {
 
   void showToast(){
     Fluttertoast.showToast(
-        msg: '로그인 성공하였습니다.',
+        msg: '회원가입에 성공하였습니다.',
     gravity: ToastGravity.BOTTOM,
     backgroundColor: Colors.grey,
     fontSize: 20,

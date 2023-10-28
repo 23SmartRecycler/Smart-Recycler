@@ -1,12 +1,11 @@
-import 'dart:ffi';
-
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:smartrecycler/GifticonPage/Gifticon.dart';
+import 'package:smartrecycler/common/TaskServer.dart';
 
 part 'GifticonRepository.g.dart';
 
-@RestApi(baseUrl: 'http://203.249.77.25:8080/v1/')
+@RestApi(baseUrl: serverUrl)
 abstract class GifticonRepository{
   factory GifticonRepository(Dio dio, {String? baseUrl}) = _GifticonRepository;
 

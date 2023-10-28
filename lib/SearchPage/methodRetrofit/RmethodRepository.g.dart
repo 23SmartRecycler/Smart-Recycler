@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'GifticonRepository.dart';
+part of 'RmethodRepository.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'GifticonRepository.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _GifticonRepository implements GifticonRepository {
-  _GifticonRepository(
+class _RmethodRepository implements RmethodRepository {
+  _RmethodRepository(
     this._dio, {
     this.baseUrl,
   }) {
@@ -21,12 +21,11 @@ class _GifticonRepository implements GifticonRepository {
   String? baseUrl;
 
   @override
-  Future<String> createGifticon(gifticon) async {
+  Future<String> createRmethod(method) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(gifticon.toJson());
+    final _data = method;
     final _result = await _dio.fetch<String>(_setStreamType<String>(Options(
       method: 'POST',
       headers: _headers,
@@ -34,7 +33,7 @@ class _GifticonRepository implements GifticonRepository {
     )
         .compose(
           _dio.options,
-          'gifticons/new',
+          'method',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -44,27 +43,71 @@ class _GifticonRepository implements GifticonRepository {
   }
 
   @override
-  Future<List<GifticonItem>> list() async {
+  Future<void> deleteRmethod(mid) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'method/${mid}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<List<RmethodParams>> getRmethods() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<GifticonItem>>(Options(
+        .fetch<List<dynamic>>(_setStreamType<List<RmethodParams>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/gifticons',
+              'methods/',
               queryParameters: queryParameters,
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     var value = _result.data!
-        .map((dynamic i) => GifticonItem.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => RmethodParams.fromJson(i as Map<String, dynamic>))
         .toList();
+    return value;
+  }
+
+  @override
+  Future<Rmethod> getRmethod(mid) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Rmethod>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'method/${mid}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Rmethod.fromJson(_result.data!);
     return value;
   }
 

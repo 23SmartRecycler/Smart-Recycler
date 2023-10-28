@@ -18,18 +18,22 @@ Map<String, dynamic> _$GifticonListToJson(GifticonList instance) =>
     };
 
 GifticonItem _$GifticonItemFromJson(Map<String, dynamic> json) => GifticonItem(
-      gImage: json['gImage'] as String?,
-      gName: json['gName'] as String?,
+      gid: json['gid'] as int?,
+      gimage: json['gimage'] as String?,
+      gname: json['gname'] as String?,
+      uid: json['uid'] as String?,
       price: json['price'] as int?,
-      stockQuantitiy: json['stockQuantitiy'] as int?,
+      stockQuantity: json['stockQuantity'] as int?,
       expireData: json['expireData'] as String?,
     );
 
 Map<String, dynamic> _$GifticonItemToJson(GifticonItem instance) =>
     <String, dynamic>{
-      'gImage': instance.gImage,
-      'gName': instance.gName,
+      'gid' : instance.gid,
+      'gimage': instance.gimage,
+      'gname': instance.gname,
+      'uid': instance.uid,
       'price': instance.price,
-      'stockQuantitiy': instance.stockQuantitiy,
+      'stockQuantity': instance.stockQuantity,
       'expireData': instance.expireData,
     };

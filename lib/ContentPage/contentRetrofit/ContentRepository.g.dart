@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'GifticonRepository.dart';
+part of 'ContentRepository.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'GifticonRepository.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _GifticonRepository implements GifticonRepository {
-  _GifticonRepository(
+class _ContentRepository implements ContentRepository {
+  _ContentRepository(
     this._dio, {
     this.baseUrl,
   }) {
@@ -21,12 +21,12 @@ class _GifticonRepository implements GifticonRepository {
   String? baseUrl;
 
   @override
-  Future<String> createGifticon(gifticon) async {
+  Future<String> createContent(content) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(gifticon.toJson());
+    _data.addAll(content.toJson());
     final _result = await _dio.fetch<String>(_setStreamType<String>(Options(
       method: 'POST',
       headers: _headers,
@@ -34,7 +34,7 @@ class _GifticonRepository implements GifticonRepository {
     )
         .compose(
           _dio.options,
-          'gifticons/new',
+          'content',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -44,26 +44,47 @@ class _GifticonRepository implements GifticonRepository {
   }
 
   @override
-  Future<List<GifticonItem>> list() async {
+  Future<void> deleteContent(cid) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<GifticonItem>>(Options(
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'content/${cid}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<List<Content>> getContents() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result =
+        await _dio.fetch<List<dynamic>>(_setStreamType<List<Content>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/gifticons',
+              'contents/',
               queryParameters: queryParameters,
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     var value = _result.data!
-        .map((dynamic i) => GifticonItem.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => Content.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }

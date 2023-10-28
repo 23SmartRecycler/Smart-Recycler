@@ -13,7 +13,7 @@ class _UserRepository implements UserRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://203.249.77.25:8080/v1/';
+    baseUrl ??= serverUrl;
   }
 
   final Dio _dio;
@@ -44,7 +44,7 @@ class _UserRepository implements UserRepository {
   }
 
   @override
-  Future<void> deleteUser(userId) async {
+  Future<void> deleteUser(uid) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -56,7 +56,7 @@ class _UserRepository implements UserRepository {
     )
         .compose(
           _dio.options,
-          'user/${userId}',
+          'user/${uid}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -65,7 +65,30 @@ class _UserRepository implements UserRepository {
   }
 
   @override
-  Future<Long> login(
+  Future<User> getUser(uid) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<User>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'user/${uid}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = User.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<dynamic> login(
     email,
     password,
   ) async {
@@ -90,7 +113,7 @@ class _UserRepository implements UserRepository {
   }
 
   @override
-  Future<bool> getPassword(
+  Future<dynamic> getPassword(
     email,
     profileName,
   ) async {
@@ -115,7 +138,7 @@ class _UserRepository implements UserRepository {
   }
 
   @override
-  Future<bool> checkDuplicateLoginId(email) async {
+  Future<dynamic> checkDuplicateLoginId(email) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -137,8 +160,8 @@ class _UserRepository implements UserRepository {
   }
 
   @override
-  Future<bool> updatePassword(
-    userId,
+  Future<dynamic> updatePassword(
+    uid,
     originPwd,
     newPwd,
   ) async {
@@ -153,7 +176,7 @@ class _UserRepository implements UserRepository {
     )
         .compose(
           _dio.options,
-          'user/${userId}/password/${originPwd}/${newPwd}',
+          'user/{userId}/password/${originPwd}/${newPwd}',
           queryParameters: queryParameters,
           data: _data,
         )

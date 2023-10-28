@@ -1,13 +1,12 @@
-import 'dart:ffi';
-
-import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
-import 'package:smartrecycler/UserPage/User.dart';
+import 'package:retrofit/retrofit.dart';
+import 'package:smartrecycler/UserPage/userRetrofit/User.dart';
+import 'package:smartrecycler/common/TaskServer.dart';
 
 part 'UserRepository.g.dart';
 
 
-@RestApi(baseUrl: 'http://203.249.77.25:8080/v1/')
+@RestApi(baseUrl: serverUrl)
 
 abstract class UserRepository {
   factory UserRepository(Dio dio, {String? baseUrl}) =
@@ -16,8 +15,11 @@ abstract class UserRepository {
   @POST('user')
   Future<String> createUser(@Body()User user);
 
-  @DELETE('user/{userId}')
-  Future<void> deleteUser(@Path('userId')Long userId);
+  @DELETE('user/{uid}')
+  Future<void> deleteUser(@Path('uid')int uid);
+
+  @GET('user/{uid}')
+  Future<User> getUser(@Path('uid') int uid);
 
   @GET('user/login/{email}/{password}')
   Future login(@Path('email') String email, @Path('password') String password );
@@ -29,6 +31,6 @@ abstract class UserRepository {
   Future checkDuplicateLoginId(@Path('email') String email );
 
   @PUT('user/{userId}/password/{originPwd}/{newPwd}')
-  Future updatePassword(@Path('userId') Long userId, @Path('originPwd') String originPwd, @Path('newPwd') String newPwd);
+  Future updatePassword(@Path('uid') int uid, @Path('originPwd') String originPwd, @Path('newPwd') String newPwd);
 
 }

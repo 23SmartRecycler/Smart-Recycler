@@ -1,8 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:smartrecycler/common/colors.dart';
-import 'package:smartrecycler/findPassword.dart';
-import 'package:smartrecycler/sign_up.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smartrecycler/UserPage/findPassword.dart';
+import 'package:smartrecycler/UserPage/sign_up.dart';
+import 'package:smartrecycler/common/colors.dart';
+
+import '../bottomNavi.dart';
+import 'userRetrofit/UserRepository.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -24,20 +30,46 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
+  late final UserRepository _UserRepository;
+  static final storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic userInfo = '';
 
+  @override
+  void initState() {
+    super.initState();
+    Dio dio = Dio();
+
+    _UserRepository = UserRepository(dio);
+
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+
+  }
+
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    userInfo = await storage.read(key:'login');
+
+    // user의 정보가 있다면 로그인 후 들어가는 첫 페이지로 넘어가게 합니다.
+    if (userInfo != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavi()));
+    } else {
+      Fluttertoast.showToast(
+          msg: '로그인이 필요합니다',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }
+  }
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  var _bottomNavIndex = 0;
-
-  final iconList = <IconData>[
-    Icons.home_filled,
-    Icons.shopping_cart_outlined,
-    Icons.settings,
-    Icons.person
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +95,11 @@ class _LogInState extends State<LogIn> {
                     // 키보드가 올라와서 만약 스크린 영역을 차지하는 경우 스크롤이 되도록
                     // SingleChildScrollView으로 감싸 줌
                     child: SingleChildScrollView(
+                      key: _formKey,
                       child: Column(
                         children:<Widget> [
                           TextField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                                 hintText: '이메일',
                               hintStyle: TextStyle(color: gray03),
@@ -84,6 +118,7 @@ class _LogInState extends State<LogIn> {
                               margin: const EdgeInsets.only(bottom: 16)
                           ),
                           TextField(
+                            controller: _passwordController,
                             decoration:
                             InputDecoration(
                                 hintText: '비밀번호',
@@ -104,7 +139,7 @@ class _LogInState extends State<LogIn> {
                           ButtonTheme(
                               padding: EdgeInsets.all(16.0),
                               child: ElevatedButton(
-                                  onPressed: () {;},
+                                  onPressed: () {login();},
                                 child: Text('로그인'),
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: mainGreen,
@@ -133,45 +168,32 @@ class _LogInState extends State<LogIn> {
                     )),
               )),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.center_focus_weak,
-          size: 30,
-          color: Colors.white,
-        ),
-        backgroundColor: mainGreen,
-        onPressed: () {
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive ? activeNavigationBarColor : notActiveNavigationBarColor;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                iconList[index],
-                size: 24,
-                color: color,
-              ),
-              const SizedBox(height: 4),
-            ],
-          );
-        },
-        backgroundColor: Colors.white,
-        activeIndex: _bottomNavIndex,
-        splashColor: activeNavigationBarColor,
-        splashSpeedInMilliseconds: 300,
-        notchSmoothness: NotchSmoothness.softEdge,
-        gapLocation: GapLocation.center,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
-      ),
     );
   }
-  void login(){
-
+  void login() async {
+    final login = await  _UserRepository.login(_emailController.text, _passwordController.text);
+    if(login==-1){
+      Fluttertoast.showToast(
+          msg: '이메일 혹은 비밀번호가 일치하지 않습니다.',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }else{
+      var val = login.toString();
+      await storage.write(
+        key: 'login',
+        value: val,
+      );
+      Fluttertoast.showToast(
+          msg: '로그인 성공\n 환영합니다!',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavi())) ;
+    }
   }
 }

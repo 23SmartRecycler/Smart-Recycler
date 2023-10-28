@@ -18,17 +18,21 @@ class GifticonList{
 
 @JsonSerializable()
 class GifticonItem {
-  final String? gImage;
-  final String? gName;
+  final int? gid;
+  final String? gimage;
+  final String? gname;
+  final String? uid;
   final int? price;
-  final int? stockQuantitiy;
+  final int? stockQuantity;
   final String? expireData;
 
   GifticonItem({
-    required this.gImage,
-    required this.gName,
+    required this.gid,
+    required this.gimage,
+    required this.gname,
+    required this.uid,
     required this.price,
-    required this.stockQuantitiy,
+    required this.stockQuantity,
     required this.expireData,
   });
 
