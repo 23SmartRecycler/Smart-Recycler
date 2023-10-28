@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smartrecycler/gift_explanation.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import 'GifticonPage/Gifticon.dart';
 import 'GifticonPage/GifticonRepository.dart';
+import 'UserPage/userRetrofit/User.dart';
+import 'UserPage/userRetrofit/UserRepository.dart';
 
 class GiftPage extends StatelessWidget {
   const GiftPage({super.key});
@@ -74,41 +77,134 @@ final PointJson= {"total":10000, "current" : 4700,};
 class point extends StatefulWidget {
   const point({super.key});
 
+
   @override
   State<point> createState() => _pointState();
 }
 
 class _pointState extends State<point> {
 
+  // userRepository
+  late final UserRepository _userRepository;
+  static final storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic userInfo = '';
+
+  @override
+  void initState(){
+    Dio dio = Dio();
+    _userRepository = UserRepository(dio);
+
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+
+    super.initState();
+  }
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    userInfo = await storage.read(key: 'login');
+    if (userInfo != null) {
+      return userInfo;
+    }
+  }
+
+  Future<int?> findUserPoint() async {
+    int uid = int.parse(await _asyncMethod());
+    final User user = await _userRepository.getUser(uid);
+    return user.point;
+  }
+
   Point? p = Point.fromJson(PointJson);
 
   @override
   Widget build(BuildContext context) {
-    return Container(alignment: Alignment.center,
-      margin: EdgeInsets.all(10),
-      child: SizedBox(width: 300, height: 300,
-        child: CircularStepProgressIndicator(
-          totalSteps: 100,
-          currentStep: 74,
-          stepSize: 10,
-          selectedColor: Colors.greenAccent,
-          unselectedColor: Colors.grey[200],
-          padding: 0,
-          width: 150,
-          height: 150,
-          selectedStepSize: 15,
-          roundedCap: (_, __) => true,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('${p!.current} Point', style: TextStyle(fontSize: 25, color: Colors.green, fontWeight: FontWeight.w700),),
-              Text('${p!.current}/${p!.total}',style: TextStyle(color: Colors.grey,),),
-            ],
-          )
-        ),
-      ),
+    return FutureBuilder(
+      future: findUserPoint(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if(snapshot.hasData == false){
+          return const CircularProgressIndicator();
+        }
+        else if(snapshot.hasError){
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(fontSize: 15),
+              ),
+          );
+        }
+        else {
+            return Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.all(10),
+              child: SizedBox(
+                width: 300,
+                height: 300,
+                child: CircularStepProgressIndicator(
+                    totalSteps: 100,
+                    currentStep: 74,
+                    stepSize: 10,
+                    selectedColor: Colors.greenAccent,
+                    unselectedColor: Colors.grey[200],
+                    padding: 0,
+                    width: 150,
+                    height: 150,
+                    selectedStepSize: 15,
+                    roundedCap: (_, __) => true,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${p!.current} Point',
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.green,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          '${p!.current}/${p!.total}',
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            );
+          }
+        }
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Container(alignment: Alignment.center,
+  //     margin: EdgeInsets.all(10),
+  //     child: SizedBox(width: 300, height: 300,
+  //       child: CircularStepProgressIndicator(
+  //         totalSteps: 100,
+  //         currentStep: 74,
+  //         stepSize: 10,
+  //         selectedColor: Colors.greenAccent,
+  //         unselectedColor: Colors.grey[200],
+  //         padding: 0,
+  //         width: 150,
+  //         height: 150,
+  //         selectedStepSize: 15,
+  //         roundedCap: (_, __) => true,
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Text('${p!.current} Point', style: TextStyle(fontSize: 25, color: Colors.green, fontWeight: FontWeight.w700),),
+  //             Text('${p!.current}/${p!.total}',style: TextStyle(color: Colors.grey,),),
+  //           ],
+  //         )
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 /*
@@ -135,23 +231,6 @@ class _gifticonState extends State<gifticon> {
   }
 }
 
-/*
-* json 형식의 기프티콘 정보
-* ++++++++++++++++++++ img 정보 추가해야함.
-* */
-
-
-// final GifticonList = [
-//   {"name": "1", "cost": "100"},
-//   {"name": "2", "cost": "200"},
-//   {"name": "3", "cost": "300"},
-//   {"name": "4", "cost": "400"},
-//   {"name": "5", "cost": "500"},
-//   {"name": "6", "cost": "600"},
-//   {"name": "7", "cost": "700"},
-//   {"name": "8", "cost": "800"},
-//   {"name": "9", "cost": "900"},
-// ];
 /*
 * 기프티콘 정보를 받아서 그리드를 만드는 위젯
 * 기프티콘 정보 = {name, cost}
