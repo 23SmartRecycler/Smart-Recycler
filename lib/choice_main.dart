@@ -66,6 +66,7 @@ class Grid_box extends StatelessWidget {
           return InkWell( // 클릭하면 애니매이션 효과 나옴(필요없으면 GestureDetector사용)
 
             onTap:() {
+              //Navigator.push(context, MaterialPageRoute(builder: (context) => Detection()));
             },  //클릭했을 때 해당 카메라 촬영(detection)으로 이동해야 함
 
             child: Container(

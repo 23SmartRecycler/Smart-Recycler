@@ -212,49 +212,12 @@ class _SignupState extends State<SignUp> {
             )),
       ),
 
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.center_focus_weak,
-          size: 30,
-          color: Colors.white,
-        ),
-        backgroundColor: mainGreen,
-        onPressed: () {
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive ? activeNavigationBarColor : notActiveNavigationBarColor;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                iconList[index],
-                size: 24,
-                color: color,
-              ),
-              const SizedBox(height: 4),
-            ],
-          );
-        },
-        backgroundColor: Colors.white,
-        activeIndex: _bottomNavIndex,
-        splashColor: activeNavigationBarColor,
-        splashSpeedInMilliseconds: 300,
-        notchSmoothness: NotchSmoothness.softEdge,
-        gapLocation: GapLocation.center,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
-      ),
-
     );
   }
 
   //회원가입 하는 메소드
   void _register() async {
-    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0,profileImage: "");
+    final User user =User(email: _emailController.text,password: _passwordController.text,profileName:_nameController.text,exp: 0,point: 0,profileImage: "basic.jpg");
     _UserRepository.createUser(user);
     if (user == null) {
       final snacBar = SnackBar(
