@@ -4,9 +4,10 @@ class GiftExplanationPage extends StatefulWidget {
   final String? image;
   final String? name;
   final String? expireData;
+  final String? cost;
 
   // 위의 인자들은 이전 페이지에서 호출받을 때 전달받을 것임
-  const GiftExplanationPage(this.image, this.name, this.expireData,{Key? key}):super(key: key);
+  const GiftExplanationPage(this.image, this.name, this.expireData, this.cost,{Key? key}):super(key: key);
 
   @override
   State<GiftExplanationPage> createState() => _GiftExplanationPageState();
@@ -16,7 +17,7 @@ class _GiftExplanationPageState extends State<GiftExplanationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GiftExplanation(image:widget.image, name:widget.name, expireData:widget.expireData),
+      body: GiftExplanation(image:widget.image, name:widget.name, expireData:widget.expireData, cost:widget.cost),
     );
   }
 }
@@ -27,11 +28,13 @@ class GiftExplanation extends StatefulWidget {
     Key? key,
     this.image,
     this.name,
-    this.expireData
+    this.expireData,
+    this.cost,
 });
   final String? image;
   final String? name;
   final String? expireData;
+  final String? cost;
   //const GiftExplanation({super.key});
 
   @override
@@ -55,7 +58,7 @@ class _GiftExplanationState extends State<GiftExplanation> {
       body: ListView(children: [
         ItemImageBox(image:widget.image),
         ItemExplanationBox(name:widget.name, expireData:widget.expireData),
-        ExchangeButton(),
+        ExchangeButton(cost: widget.cost),
       ],),
     );
   }
@@ -174,20 +177,32 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
   }
 }
 
-class ExchangeButton extends StatelessWidget {
-  const ExchangeButton({super.key});
+class ExchangeButton extends StatefulWidget {
+
+  const ExchangeButton({
+    Key? key,
+    this.cost,
+  });
+  final String? cost;
+  //const ExchangeButton({super.key});
+
+  @override
+  State<ExchangeButton> createState() => _ExchangeButtonState();
+}
+
+class _ExchangeButtonState extends State<ExchangeButton> {
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
 
-        child: ButtonTheme(
+      child: ButtonTheme(
           child: ElevatedButton(
             onPressed: (){showDialog(
-                context: context,
-                builder: (context) {return ExchangeDialog();},
-                barrierDismissible: false ,);
+              context: context,
+              builder: (context) {return ExchangeDialog(cost:widget.cost);},
+              barrierDismissible: false ,);
             },
             child: Text('교환하기',style: TextStyle(fontSize: 18,color: Colors.white, fontWeight: FontWeight.w600,),),
             style: ElevatedButton.styleFrom(
@@ -197,64 +212,70 @@ class ExchangeButton extends StatelessWidget {
               textStyle: TextStyle(fontFamily: 'Pretendard',fontWeight: FontWeight.w600),
             ),
           )
-        ),
-      );
+      ),
+    );
   }
 }
 
-
-
-class ExchangeDialog extends StatelessWidget {
-  const ExchangeDialog({super.key});
+class ExchangeDialog extends StatefulWidget {
+  const ExchangeDialog({
+    Key? key,
+    this.cost,
+  });
+  final String? cost;
 
   @override
-  Widget build(BuildContext context) {
+  State<ExchangeDialog> createState() => _ExchangeDialogState();
+}
 
+class _ExchangeDialogState extends State<ExchangeDialog> {
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       content: Container(padding: EdgeInsets.all(10),
-        child:Column(mainAxisSize: MainAxisSize.min,
-          children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text('기프티콘 교환', style: TextStyle(fontSize: 20),),
-          ),
-          Text('4700 포인트로 기프티콘을 \n교환하시겠습니까?',textAlign: TextAlign.center,),
-      ],)),
+          child:Column(mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text('기프티콘 교환', style: TextStyle(fontSize: 20),),
+              ),
+              Text('${widget.cost} 포인트로 기프티콘을 \n교환하시겠습니까?',textAlign: TextAlign.center,),
+            ],)),
       actions: [
         Column(crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-          /*
+            /*
           * 교환하기 버튼
           * */
-          Container(
-           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            decoration: BoxDecoration(color: Colors.green,
-                borderRadius: BorderRadius.circular(90)
-            ),
-            child: TextButton(
-              onPressed: (){Navigator.pop(context);},
-              child: Center(
-                child: Text('교환하기',
-                  style: TextStyle(fontSize: 20,color: Colors.white, fontWeight: FontWeight.w600,),),
+            Container(
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              decoration: BoxDecoration(color: Colors.green,
+                  borderRadius: BorderRadius.circular(90)
+              ),
+              child: TextButton(
+                onPressed: (){Navigator.pop(context);},
+                child: Center(
+                  child: Text('교환하기',
+                    style: TextStyle(fontSize: 20,color: Colors.white, fontWeight: FontWeight.w600,),),
+                ),
               ),
             ),
-          ),
 
-          /*
+            /*
           * 취소 버튼
           * */
-          Container(
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: TextButton(
-              onPressed: (){Navigator.pop(context);},
-              child: Center(
-                child: Text('취소',
-                  style: TextStyle(fontSize: 20,color: Colors.green, fontWeight: FontWeight.w600,),),
+            Container(
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: TextButton(
+                onPressed: (){Navigator.pop(context);},
+                child: Center(
+                  child: Text('취소',
+                    style: TextStyle(fontSize: 20,color: Colors.green, fontWeight: FontWeight.w600,),),
+                ),
               ),
             ),
-          ),
 
-        ],)
+          ],)
       ],
     );
   }

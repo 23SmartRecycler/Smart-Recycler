@@ -336,7 +336,7 @@ class _GridItemsState extends State<GridItems> {
           onTap: () {
             Navigator.push(context,
               MaterialPageRoute(
-                builder: (context) => GiftExplanationPage(image,name,expireData))
+                builder: (context) => GiftExplanationPage(image,name,expireData,cost))
             );
           },
           child: Container(
