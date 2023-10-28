@@ -55,22 +55,22 @@ class _giftState extends State<gift> {
 * point 정보를 저장할 클래스
 * json에서 받아올 등급별 point 정보 = {등급.total, 회원.current}
 * */
-class Point{
-  final int total;
-  final int current;
-  Point(this.total, this.current);
-
-  Point.fromJson(Map<String, dynamic> json)
-    : total = json['total'],
-      current = json['current'];
-
-  Map<String, dynamic> toJson() =>
-      {
-        'total': total,
-        'current': current,
-      };
-}
-final PointJson= {"total":10000, "current" : 4700,};
+// class Point{
+//   final int total;
+//   final int current;
+//   Point(this.total, this.current);
+//
+//   Point.fromJson(Map<String, dynamic> json)
+//     : total = json['total'],
+//       current = json['current'];
+//
+//   Map<String, dynamic> toJson() =>
+//       {
+//         'total': total,
+//         'current': current,
+//       };
+// }
+// final PointJson= {"total":10000, "current" : 4700,};
 
 
 // 개인 잔여 포인트 박스
@@ -116,7 +116,7 @@ class _pointState extends State<point> {
     return user.point;
   }
 
-  Point? p = Point.fromJson(PointJson);
+  //Point? p = Point.fromJson(PointJson);
 
   @override
   Widget build(BuildContext context) {
@@ -143,8 +143,8 @@ class _pointState extends State<point> {
                 width: 300,
                 height: 300,
                 child: CircularStepProgressIndicator(
-                    totalSteps: 100,
-                    currentStep: 74,
+                    totalSteps: 10000,
+                    currentStep: snapshot.data,
                     stepSize: 10,
                     selectedColor: Colors.greenAccent,
                     unselectedColor: Colors.grey[200],
@@ -157,14 +157,14 @@ class _pointState extends State<point> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '${p!.current} Point',
+                          '${snapshot.data} Point',
                           style: TextStyle(
                               fontSize: 25,
                               color: Colors.green,
                               fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          '${p!.current}/${p!.total}',
+                          '${snapshot.data}/10000',
                           style: TextStyle(
                             color: Colors.grey,
                           ),
@@ -259,14 +259,14 @@ class _GridItemsState extends State<GridItems> {
 
     final List<GifticonItem> list = await _gifticonRepository.list();
 
-    // 잘 받아졌는지 확인
-    // print(list.elementAt(1).price);
-    // print(list.elementAt(1).stockQuantity);
-    // print(list.elementAt(1).gid);
-    // print(list.elementAt(1).uid);
-    // print(list.elementAt(1).expireData);
-    // print(list.elementAt(1).gimage);
-    // print(list.elementAt(1).gname);
+    //잘 받아졌는지 확인
+    print(list.elementAt(1).price);
+    print(list.elementAt(1).stockQuantity);
+    print(list.elementAt(1).gid);
+    print(list.elementAt(1).uid);
+    print(list.elementAt(1).expireData);
+    print(list.elementAt(1).gimage);
+    print(list.elementAt(1).gname);
 
     return list;
   }
