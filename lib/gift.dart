@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrecycler/gift_explanation.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+
+import 'GifticonPage/Gifticon.dart';
+import 'GifticonPage/GifticonRepository.dart';
 
 class GiftPage extends StatelessWidget {
   const GiftPage({super.key});
@@ -31,6 +35,7 @@ class _giftState extends State<gift> {
           ),
         ),
         title: Text('교환하기',style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
+        actions: [TextButton(onPressed: (){}, child: Text('추가 하기',style: TextStyle(color: Colors.green,),))],
       ),
       body: ListView(//mainAxisAlignment: MainAxisAlignment.start,
             //crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,6 +122,7 @@ class gifticon extends StatefulWidget {
 }
 
 class _gifticonState extends State<gifticon> {
+
   @override
   Widget build(BuildContext context) {
     return Container(width: double.infinity, height: 1000, margin: EdgeInsets.only(left: 10),
@@ -133,18 +139,19 @@ class _gifticonState extends State<gifticon> {
 * json 형식의 기프티콘 정보
 * ++++++++++++++++++++ img 정보 추가해야함.
 * */
-final GifticonList = [
-  {"name": "1", "cost": "100"},
-  {"name": "2", "cost": "200"},
-  {"name": "3", "cost": "300"},
-  {"name": "4", "cost": "400"},
-  {"name": "5", "cost": "500"},
-  {"name": "6", "cost": "600"},
-  {"name": "7", "cost": "700"},
-  {"name": "8", "cost": "800"},
-  {"name": "9", "cost": "900"},
-];
 
+
+// final GifticonList = [
+//   {"name": "1", "cost": "100"},
+//   {"name": "2", "cost": "200"},
+//   {"name": "3", "cost": "300"},
+//   {"name": "4", "cost": "400"},
+//   {"name": "5", "cost": "500"},
+//   {"name": "6", "cost": "600"},
+//   {"name": "7", "cost": "700"},
+//   {"name": "8", "cost": "800"},
+//   {"name": "9", "cost": "900"},
+// ];
 /*
 * 기프티콘 정보를 받아서 그리드를 만드는 위젯
 * 기프티콘 정보 = {name, cost}
@@ -157,27 +164,83 @@ class GridItems extends StatefulWidget {
 }
 
 class _GridItemsState extends State<GridItems> {
+  // 기프티콘 리포지토리 생성
+  late final GifticonRepository _gifticonRepository;
+  dynamic gifticonInfo = ' ';
+
+  @override
+  void initState(){
+    Dio dio = Dio();
+    _gifticonRepository = GifticonRepository(dio);
+
+    super.initState();
+  }
+
+  Future<List<GifticonItem>> list() async {
+
+    final List<GifticonItem> list = await _gifticonRepository.list();
+
+    // 잘 받아졌는지 확인
+    // print(list.elementAt(1).price);
+    // print(list.elementAt(1).stockQuantity);
+    // print(list.elementAt(1).gid);
+    // print(list.elementAt(1).uid);
+    // print(list.elementAt(1).expireData);
+    // print(list.elementAt(1).gimage);
+    // print(list.elementAt(1).gname);
+
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Expanded(
-      child: GridView.builder(
-        //그리드 뷰 자동 스크롤 없애기
-        physics: const NeverScrollableScrollPhysics(),
+      child: FutureBuilder<List<GifticonItem>>(
+        future: list(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          final List<GifticonItem> result = snapshot.data;
+          //데이터가 없으면
+          if(snapshot. hasData == false){
+            return const ListTile(
+              title: Center(child: CircularProgressIndicator(),)
+            );
+          }
+          else if(snapshot.hasError){
+            return Padding(
+              padding : const EdgeInsets.all(8.0),
+              child: Text('Error: ${snapshot.error}',
+                style: TextStyle(fontSize: 15),
+              ),
+            );
+          }
+          else{
+            return GridView.builder(
+              //그리드 뷰 자동 스크롤 없애기
+              physics: const NeverScrollableScrollPhysics(),
 
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,            // 1행에 보여줄 아이템 수
-          childAspectRatio: 1/1.3,        // item 의 가로 1, 세로 1 의 비율
-          mainAxisSpacing: 8,          // 수평 padding
-          crossAxisSpacing: 8,         // 수직 padding
-        ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 1행에 보여줄 아이템 수
+                childAspectRatio: 1 / 1.3, // item 의 가로 1, 세로 1 의 비율
+                mainAxisSpacing: 8, // 수평 padding
+                crossAxisSpacing: 8, // 수직 padding
+              ),
 
-        itemCount: GifticonList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return gifticonContainer(
-            name: GifticonList[index]["name"] as String,
-            cost: GifticonList[index]["cost"] as String,
-          );
-      },),
+              itemCount: result.length,
+              itemBuilder: (BuildContext context, int index) {
+                final content = result[index];
+                return gifticonContainer(
+                  image : content.gimage.toString(),
+                  name: content.gname.toString(),
+                  cost: content.price.toString(),
+                  // name: GifticonList[index]["name"] as String,
+                  // cost: GifticonList[index]["cost"] as String,
+                );
+              },
+            );
+          }
+        }
+      ),
     );
   }
 
@@ -186,7 +249,7 @@ class _GridItemsState extends State<GridItems> {
 * {기프티콘 이미지, 이름, 필요 포인트 표시}
 * 이미지 클릭 후 상세 페이지로 이동
 * */
-  Widget gifticonContainer({String name = "0", String cost = "0"}){
+  Widget gifticonContainer({String image = "0", String name = "0", String cost = "0"}){
     return Container(
       child: Column( crossAxisAlignment: CrossAxisAlignment.start,
         children: [InkWell(
@@ -203,6 +266,7 @@ class _GridItemsState extends State<GridItems> {
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: Colors.black12,
             ),
+            child: Text('$image'),
           ),
         ),
         Text('기프티콘 $name'),

@@ -13,7 +13,7 @@ class _GifticonRepository implements GifticonRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://localhost:8080//v1/';
+    baseUrl ??= serverUrl;
   }
 
   final Dio _dio;
