@@ -1,18 +1,38 @@
 import 'package:flutter/material.dart';
 
-class GiftExplanationPage extends StatelessWidget {
-  const GiftExplanationPage({super.key});
+class GiftExplanationPage extends StatefulWidget {
+  final String? image;
+  final String? name;
+  final String? expireData;
 
+  // 위의 인자들은 이전 페이지에서 호출받을 때 전달받을 것임
+  const GiftExplanationPage(this.image, this.name, this.expireData,{Key? key}):super(key: key);
+
+  @override
+  State<GiftExplanationPage> createState() => _GiftExplanationPageState();
+}
+
+class _GiftExplanationPageState extends State<GiftExplanationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GiftExplanation(),
+      body: GiftExplanation(image:widget.image, name:widget.name, expireData:widget.expireData),
     );
   }
 }
 
 class GiftExplanation extends StatefulWidget {
-  const GiftExplanation({super.key});
+  // 부모 클래스에서 매개변수 전달받음
+  const GiftExplanation({
+    Key? key,
+    this.image,
+    this.name,
+    this.expireData
+});
+  final String? image;
+  final String? name;
+  final String? expireData;
+  //const GiftExplanation({super.key});
 
   @override
   State<GiftExplanation> createState() => _GiftExplanationState();
@@ -33,17 +53,28 @@ class _GiftExplanationState extends State<GiftExplanation> {
         title: Text('기프티콘',style: TextStyle(color: Colors.white,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
       ),
       body: ListView(children: [
-        ItemImageBox(),
-        ItemExplanationBox(),
+        ItemImageBox(image:widget.image),
+        ItemExplanationBox(name:widget.name, expireData:widget.expireData),
         ExchangeButton(),
       ],),
     );
   }
 }
 
-class ItemImageBox extends StatelessWidget {
-  const ItemImageBox({super.key});
+class ItemImageBox extends StatefulWidget {
+  // 부모 클래스에서 매개변수 전달받음
+  const ItemImageBox({
+    Key? key,
+    this.image,
+  });
+  final String? image;
+  //const ItemImageBox({super.key});
 
+  @override
+  State<ItemImageBox> createState() => _ItemImageBoxState();
+}
+
+class _ItemImageBoxState extends State<ItemImageBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -52,14 +83,22 @@ class ItemImageBox extends StatelessWidget {
       child: Container(
         margin:EdgeInsets.all(20),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-        child: Text(''),
+        child: Text("${widget.image}"),
       ),
     );
   }
 }
 
 class ItemExplanationBox extends StatefulWidget {
-  const ItemExplanationBox({super.key});
+  // 부모 클래스에서 매개변수 전달받음
+  const ItemExplanationBox({
+    Key? key,
+    this.name,
+    this.expireData
+  });
+  final String? name;
+  final String? expireData;
+  //const ItemExplanationBox({super.key});
 
   @override
   State<ItemExplanationBox> createState() => _ItemExplanationBoxState();
@@ -86,7 +125,7 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
                       padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
                     child: Text('상품명', style: TextStyle(fontSize: 18))
                   ),),
-                Text('기프티콘 이름'),
+                Text('${widget.name}'),
               ],
             ),
           ),
@@ -102,7 +141,8 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
                     padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
                     child: Text('유효기간', style: TextStyle(fontSize: 18))
                 ),),
-                Text('2XXX.XX.XX'),
+
+                Text('${widget.expireData}'),//'2XXX.XX.XX'
               ],
             ),
           ),
@@ -125,7 +165,9 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
           // 주의 사항 내용
           Container(margin: EdgeInsets.only(top: 10),
             child: Text(style: TextStyle(color: Colors.black54),
-              '주의 사항 내용 \n주의 사항 내용 주의 사항 내용 주의 사항 내용 주의 사항 내용 주의 사항 내용')
+              '주의 사항 내용 \n1. 포인트 결제 방식이기 때문에 구매 후 구매 취소/환불을 요청할 수 없습니다.'
+                  '\n2. 유효기간 이후에는 사용이 불가능합니다.'
+                  '\n3. 미성년자인 회원이 서비스를 이용하여 상품 등을 구매 시 법정 대리인이 해당 계약에 대하여 동의를 하여야 정상적인 상품 등의 구매계약이 체결될 수 있습니다.')
           ),
       ],),
     );

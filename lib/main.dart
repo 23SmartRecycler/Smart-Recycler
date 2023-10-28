@@ -83,7 +83,7 @@ class Pages extends StatelessWidget {
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ChoicePage()));}, child: Text('Choice')),
  //         TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => DetectionPage()));}, child: Text('Detection')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftPage()));}, child: Text('Gift')),
-          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftExplanationPage()));}, child: Text('GiftEx')),
+          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftExplanationPage('0','0','0')));}, child: Text('GiftEx')),
 //          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => GiftExplanationButtonClickPage()));}, child: Text('GiftExBC')),
         ],),
         Text('민수'),
