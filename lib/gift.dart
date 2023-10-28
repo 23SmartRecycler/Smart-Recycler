@@ -233,6 +233,7 @@ class _GridItemsState extends State<GridItems> {
                   image : content.gimage.toString(),
                   name: content.gname.toString(),
                   cost: content.price.toString(),
+                  expireData: content.expireData.toString(),
                   // name: GifticonList[index]["name"] as String,
                   // cost: GifticonList[index]["cost"] as String,
                 );
@@ -249,14 +250,14 @@ class _GridItemsState extends State<GridItems> {
 * {기프티콘 이미지, 이름, 필요 포인트 표시}
 * 이미지 클릭 후 상세 페이지로 이동
 * */
-  Widget gifticonContainer({String image = "0", String name = "0", String cost = "0"}){
+  Widget gifticonContainer({String image = "0", String name = "0", String cost = "0", String expireData= "0"}){
     return Container(
       child: Column( crossAxisAlignment: CrossAxisAlignment.start,
         children: [InkWell(
           onTap: () {
             Navigator.push(context,
               MaterialPageRoute(
-                builder: (context) => GiftExplanationPage())
+                builder: (context) => GiftExplanationPage(image,name,expireData))
             );
           },
           child: Container(
@@ -269,7 +270,7 @@ class _GridItemsState extends State<GridItems> {
             child: Text('$image'),
           ),
         ),
-        Text('기프티콘 $name'),
+        Text('$name'),
         Text('필요 포인트: $cost'),
       ],)
     );
