@@ -20,6 +20,7 @@ dependencies:
   json_serializable: ">4.4.0"
   fluttertoast: ^8.0.8
   logger: ^2.0.2+1
+  async: ^2.3.0 #AsyncMemoizer 클래스
 
   flutter_secure_storage : ^5.0.2 #자동 로그인 관련
   

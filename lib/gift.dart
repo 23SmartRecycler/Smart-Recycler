@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,24 +10,14 @@ import 'GifticonPage/GifticonRepository.dart';
 import 'UserPage/userRetrofit/User.dart';
 import 'UserPage/userRetrofit/UserRepository.dart';
 
-class GiftPage extends StatelessWidget {
+class GiftPage extends StatefulWidget {
   const GiftPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: gift(),
-    );
-  }
-}
-class gift extends StatefulWidget {
-  const gift({super.key});
-
-  @override
-  State<gift> createState() => _giftState();
+  State<GiftPage> createState() => _GiftPageState();
 }
 
-class _giftState extends State<gift> {
+class _GiftPageState extends State<GiftPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,43 +25,24 @@ class _giftState extends State<gift> {
         leading: SizedBox(
           width: 1000,
           child: TextButton(onPressed: (){Navigator.pop(context);},
-            child: Text('뒤로 가기',style: TextStyle(color: Colors.green,),),
+            child: const Text('뒤로 가기',style: TextStyle(color: Colors.green,),),
           ),
         ),
-        title: Text('교환하기',style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
-        actions: [TextButton(onPressed: (){}, child: Text('추가 하기',style: TextStyle(color: Colors.green,),))],
+        title: const Text('교환하기',style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
+        actions: [TextButton(onPressed: (){}, child: const Text('추가 하기',style: TextStyle(color: Colors.green,),))],
       ),
-      body: ListView(//mainAxisAlignment: MainAxisAlignment.start,
-            //crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              point(),
-              gifticon(),
-            ],
-          ),
+      body: const SingleChildScrollView(
+        child: Column(//mainAxisAlignment: MainAxisAlignment.start,
+          //crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            point(),
+            gifticon(),
+          ],
+        ),
+      ),
     );
   }
 }
-
-/*
-* point 정보를 저장할 클래스
-* json에서 받아올 등급별 point 정보 = {등급.total, 회원.current}
-* */
-// class Point{
-//   final int total;
-//   final int current;
-//   Point(this.total, this.current);
-//
-//   Point.fromJson(Map<String, dynamic> json)
-//     : total = json['total'],
-//       current = json['current'];
-//
-//   Map<String, dynamic> toJson() =>
-//       {
-//         'total': total,
-//         'current': current,
-//       };
-// }
-// final PointJson= {"total":10000, "current" : 4700,};
 
 
 // 개인 잔여 포인트 박스
@@ -82,22 +54,19 @@ class point extends StatefulWidget {
   State<point> createState() => _pointState();
 }
 
-class _pointState extends State<point> {
-
+class _pointState extends State<point> with WidgetsBindingObserver {
+  //future 데이터 캐싱
+  final AsyncMemoizer _memoizer = AsyncMemoizer();
   // userRepository
   late final UserRepository _userRepository;
-  static final storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  static const storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
   dynamic userInfo = '';
 
   @override
   void initState(){
+    WidgetsBinding.instance.addObserver(this);
     Dio dio = Dio();
     _userRepository = UserRepository(dio);
-
-    // 비동기로 flutter secure storage 정보를 불러오는 작업
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _asyncMethod();
-    });
 
     super.initState();
   }
@@ -109,19 +78,23 @@ class _pointState extends State<point> {
       return userInfo;
     }
   }
-
-  Future<int?> findUserPoint() async {
+  Future<int> findUsersPoint() async{
     int uid = int.parse(await _asyncMethod());
     final User user = await _userRepository.getUser(uid);
-    return user.point;
+    return user.point!.toInt();
   }
 
-  //Point? p = Point.fromJson(PointJson);
+  findUserPoint() {
+    return _memoizer.runOnce(() async {
+      int uid = int.parse(await _asyncMethod());
+      final User user = await _userRepository.getUser(uid);
+      return user.point!.toInt();
+    });
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: findUserPoint(),
+  Widget build(BuildContext context) => FutureBuilder(
+      future: findUsersPoint(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(snapshot.hasData == false){
           return const CircularProgressIndicator();
@@ -131,80 +104,52 @@ class _pointState extends State<point> {
             padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: 15),
+                style: const TextStyle(fontSize: 15),
               ),
           );
         }
         else {
-            return Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.all(10),
-              child: SizedBox(
-                width: 300,
-                height: 300,
-                child: CircularStepProgressIndicator(
-                    totalSteps: 10000,
-                    currentStep: snapshot.data,
-                    stepSize: 10,
-                    selectedColor: Colors.greenAccent,
-                    unselectedColor: Colors.grey[200],
-                    padding: 0,
-                    width: 150,
-                    height: 150,
-                    selectedStepSize: 15,
-                    roundedCap: (_, __) => true,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${snapshot.data} Point',
-                          style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.green,
-                              fontWeight: FontWeight.w700),
+          int curPoint = snapshot.data;
+          return Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(10),
+            child: SizedBox(
+              width: 300,
+              height: 300,
+              child: CircularStepProgressIndicator(
+                  totalSteps: 10000,
+                  currentStep: curPoint,
+                  stepSize: 10,
+                  selectedColor: Colors.greenAccent,
+                  unselectedColor: Colors.grey[200],
+                  padding: 0,
+                  width: 150,
+                  height: 150,
+                  selectedStepSize: 15,
+                  //roundedCap: (_, __) => true, // 이거 엄청 느려짐
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$curPoint Point',
+                        style: const TextStyle(
+                            fontSize: 25,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        '$curPoint/10000',
+                        style: const TextStyle(
+                          color: Colors.grey,
                         ),
-                        Text(
-                          '${snapshot.data}/10000',
-                          style: TextStyle(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    )),
-              ),
-            );
+                      ),
+                    ],
+                  )),
+            ),
+          );
           }
         }
     );
-  }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Container(alignment: Alignment.center,
-  //     margin: EdgeInsets.all(10),
-  //     child: SizedBox(width: 300, height: 300,
-  //       child: CircularStepProgressIndicator(
-  //         totalSteps: 100,
-  //         currentStep: 74,
-  //         stepSize: 10,
-  //         selectedColor: Colors.greenAccent,
-  //         unselectedColor: Colors.grey[200],
-  //         padding: 0,
-  //         width: 150,
-  //         height: 150,
-  //         selectedStepSize: 15,
-  //         roundedCap: (_, __) => true,
-  //         child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Text('${p!.current} Point', style: TextStyle(fontSize: 25, color: Colors.green, fontWeight: FontWeight.w700),),
-  //             Text('${p!.current}/${p!.total}',style: TextStyle(color: Colors.grey,),),
-  //           ],
-  //         )
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 /*
@@ -221,9 +166,9 @@ class _gifticonState extends State<gifticon> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: double.infinity, height: 1000, margin: EdgeInsets.only(left: 10),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+    return Container(width: double.infinity, height: 1000, margin: const EdgeInsets.only(left: 10),
+      child: const Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         Text('기프티콘',style: TextStyle(fontSize: 20,),),
         GridItems(),
       ],),
@@ -259,15 +204,6 @@ class _GridItemsState extends State<GridItems> {
 
     final List<GifticonItem> list = await _gifticonRepository.list();
 
-    //잘 받아졌는지 확인
-    print(list.elementAt(1).price);
-    print(list.elementAt(1).stockQuantity);
-    print(list.elementAt(1).gid);
-    print(list.elementAt(1).uid);
-    print(list.elementAt(1).expireData);
-    print(list.elementAt(1).gimage);
-    print(list.elementAt(1).gname);
-
     return list;
   }
 
@@ -289,7 +225,7 @@ class _GridItemsState extends State<GridItems> {
             return Padding(
               padding : const EdgeInsets.all(8.0),
               child: Text('Error: ${snapshot.error}',
-                style: TextStyle(fontSize: 15),
+                style: const TextStyle(fontSize: 15),
               ),
             );
           }
@@ -313,8 +249,6 @@ class _GridItemsState extends State<GridItems> {
                   name: content.gname.toString(),
                   cost: content.price.toString(),
                   expireData: content.expireData.toString(),
-                  // name: GifticonList[index]["name"] as String,
-                  // cost: GifticonList[index]["cost"] as String,
                 );
               },
             );
@@ -330,29 +264,27 @@ class _GridItemsState extends State<GridItems> {
 * 이미지 클릭 후 상세 페이지로 이동
 * */
   Widget gifticonContainer({String image = "0", String name = "0", String cost = "0", String expireData= "0"}){
-    return Container(
-      child: Column( crossAxisAlignment: CrossAxisAlignment.start,
-        children: [InkWell(
-          onTap: () {
-            Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => GiftExplanationPage(image,name,expireData,cost))
-            );
-          },
-          child: Container(
-            width: 100, height: 100,
-            margin: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Colors.black12,
-            ),
-            child: Text('$image'),
+    return Column( crossAxisAlignment: CrossAxisAlignment.start,
+      children: [InkWell(
+        onTap: () {
+          Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) => GiftExplanationPage(image,name,expireData,cost))
+          );
+        },
+        child: Container(
+          width: 100, height: 100,
+          margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black12,
           ),
+          child: Text('$image'),
         ),
-        Text('$name'),
-        Text('필요 포인트: $cost'),
-      ],)
-    );
+      ),
+      Text('$name'),
+      Text('필요 포인트: $cost'),
+    ],);
   }
 
 }
