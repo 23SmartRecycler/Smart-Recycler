@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GiftExplanationPage extends StatefulWidget {
-  final String? image;
+  final String image;
   final String? name;
   final String? expireData;
   final String? cost;
@@ -25,7 +25,7 @@ class _GiftExplanationPageState extends State<GiftExplanationPage> {
 class GiftExplanation extends StatefulWidget {
   // 부모 클래스에서 매개변수 전달받음
   const GiftExplanation({
-    Key? key,
+    super.key,
     this.image,
     this.name,
     this.expireData,
@@ -67,7 +67,7 @@ class _GiftExplanationState extends State<GiftExplanation> {
 class ItemImageBox extends StatefulWidget {
   // 부모 클래스에서 매개변수 전달받음
   const ItemImageBox({
-    Key? key,
+    super.key,
     this.image,
   });
   final String? image;
@@ -81,12 +81,13 @@ class _ItemImageBoxState extends State<ItemImageBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity, height: 250,
+      width: double.infinity,
+      height: 250,
       color: Colors.green,
       child: Container(
-        margin:EdgeInsets.all(20),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-        child: Text("${widget.image}"),
+        margin:const EdgeInsets.all(20),
+        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)),),
+        child: Image.network('https://smartrecycler-bucket.s3.ap-northeast-2.amazonaws.com/Gifticons/${widget.image}'),
       ),
     );
   }
@@ -95,7 +96,7 @@ class _ItemImageBoxState extends State<ItemImageBox> {
 class ItemExplanationBox extends StatefulWidget {
   // 부모 클래스에서 매개변수 전달받음
   const ItemExplanationBox({
-    Key? key,
+    super.key,
     this.name,
     this.expireData
   });
@@ -180,7 +181,7 @@ class _ItemExplanationBoxState extends State<ItemExplanationBox> {
 class ExchangeButton extends StatefulWidget {
 
   const ExchangeButton({
-    Key? key,
+    super.key,
     this.cost,
   });
   final String? cost;
@@ -219,7 +220,7 @@ class _ExchangeButtonState extends State<ExchangeButton> {
 
 class ExchangeDialog extends StatefulWidget {
   const ExchangeDialog({
-    Key? key,
+    super.key,
     this.cost,
   });
   final String? cost;
