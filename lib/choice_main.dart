@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartrecycler/DetectPage/service/detection.dart';
+import 'package:smartrecycler/detection.dart';
 
 
 class ChoicePage extends StatelessWidget {

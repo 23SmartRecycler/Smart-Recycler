@@ -166,7 +166,7 @@ class _gifticonState extends State<gifticon> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: double.infinity, height: 1000, margin: const EdgeInsets.only(left: 10),
+    return Container(width: double.infinity, height: 1000, margin: const EdgeInsets.only(left: 10),padding: EdgeInsets.all(2.0),
       child: const Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: [
         Text('기프티콘',style: TextStyle(fontSize: 20,),),
@@ -236,9 +236,9 @@ class _GridItemsState extends State<GridItems> {
 
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, // 1행에 보여줄 아이템 수
-                childAspectRatio: 1 / 1.3, // item 의 가로 1, 세로 1 의 비율
+                childAspectRatio: 1 / 1.5, // item 의 가로 1, 세로 1 의 비율
                 mainAxisSpacing: 8, // 수평 padding
-                crossAxisSpacing: 8, // 수직 padding
+                crossAxisSpacing: 5, // 수직 padding
               ),
 
               itemCount: result.length,
@@ -279,7 +279,7 @@ class _GridItemsState extends State<GridItems> {
             borderRadius: BorderRadius.all(Radius.circular(10)),
             color: Colors.black12,
           ),
-          child: Text('$image'),
+          child: Ink.image(image: NetworkImage('https://smartrecycler-bucket.s3.ap-northeast-2.amazonaws.com/Gifticons/${image}')),
         ),
       ),
       Text('$name'),
