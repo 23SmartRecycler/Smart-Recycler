@@ -273,7 +273,7 @@ class _YoloVideoState extends State<YoloVideo> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/yolov8n.tflite',
+        modelPath: 'assets/tflitev1.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
@@ -420,7 +420,7 @@ class _YoloImageV5State extends State<YoloImageV5> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/yolov5n.tflite',
+        modelPath: 'assets/yolov5others.tflite',
         modelVersion: "yolov5",
         quantization: false,
         numThreads: 2,
@@ -567,7 +567,7 @@ class _YoloImageV8State extends State<YoloImageV8> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/yolov8n.tflite',
+        modelPath: 'assets/yolov8n_float32.tflite',
         modelVersion: "yolov8",
         quantization: false,
         numThreads: 2,
