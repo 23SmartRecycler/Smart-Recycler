@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -5,7 +6,6 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'dart:async';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -273,7 +273,7 @@ class _YoloVideoState extends State<YoloVideo> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/tflitev1.tflite',
+        modelPath: 'assets/best_float32.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
@@ -301,9 +301,6 @@ class _YoloVideoState extends State<YoloVideo> {
     setState(() {
       isDetecting = true;
     });
-    if (controller.value.isStreamingImages) {
-      return;
-    }
     await controller.startImageStream((image) async {
       if (isDetecting) {
         cameraImage = image;
@@ -320,13 +317,11 @@ class _YoloVideoState extends State<YoloVideo> {
   }
 
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
-    if (yoloResults.isEmpty) return [];
     double factorX = screen.width / (cameraImage?.height ?? 1);
     double factorY = screen.height / (cameraImage?.width ?? 1);
-
     Color colorPick = const Color.fromARGB(255, 50, 233, 30);
-
     return yoloResults.map((result) {
+      print("${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(0)}%");
       return Positioned(
         left: result["box"][0] * factorX,
         top: result["box"][1] * factorY,
@@ -431,13 +426,17 @@ class _YoloImageV5State extends State<YoloImageV5> {
   }
 
   Future<void> pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    // Capture a photo
-    final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
-    if (photo != null) {
-      setState(() {
-        imageFile = File(photo.path);
-      });
+    try{
+      final ImagePicker picker = ImagePicker();
+      // Capture a photo
+      final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
+      if (photo != null) {
+        setState(() {
+          imageFile = File(photo.path);
+        });
+      }
+    }catch(error){
+      print("error: $error");
     }
   }
 
@@ -565,16 +564,22 @@ class _YoloImageV8State extends State<YoloImageV8> {
   }
 
   Future<void> loadYoloModel() async {
-    await widget.vision.loadYoloModel(
-        labels: 'assets/labels.txt',
-        modelPath: 'assets/yolov8n_float32.tflite',
-        modelVersion: "yolov8",
-        quantization: false,
-        numThreads: 2,
-        useGpu: true);
-    setState(() {
-      isLoaded = true;
-    });
+    try{
+      await widget.vision.loadYoloModel(
+          labels: 'assets/labels.txt',
+          modelPath: 'assets/best_float32.tflite',
+          modelVersion: "yolov8",
+          quantization: false,
+          numThreads: 2,
+          useGpu: true);
+      setState(() {
+        isLoaded = true;
+      });
+    }
+    catch(error){
+      print("error: $error");
+    }
+
   }
 
   Future<void> pickImage() async {
@@ -714,8 +719,8 @@ class _YoloImageV8SegState extends State<YoloImageV8Seg> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/yolov8n-seg.tflite',
-        modelVersion: "yolov8seg",
+        modelPath: 'assets/best_float16.tflite',
+        modelVersion: "yolov8",
         quantization: false,
         numThreads: 2,
         useGpu: true);
