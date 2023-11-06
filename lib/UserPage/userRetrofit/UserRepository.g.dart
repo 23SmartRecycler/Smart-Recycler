@@ -13,7 +13,7 @@ class _UserRepository implements UserRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= serverUrl;
+    baseUrl ??= 'http://10.90.2.167:8080/v1/';
   }
 
   final Dio _dio;
@@ -48,7 +48,7 @@ class _UserRepository implements UserRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'DELETE',
       headers: _headers,
@@ -61,7 +61,6 @@ class _UserRepository implements UserRepository {
           data: _data,
         )
         .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    return null;
   }
 
   @override
@@ -69,7 +68,7 @@ class _UserRepository implements UserRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result =
         await _dio.fetch<Map<String, dynamic>>(_setStreamType<User>(Options(
       method: 'GET',
@@ -95,7 +94,7 @@ class _UserRepository implements UserRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -120,7 +119,7 @@ class _UserRepository implements UserRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -142,7 +141,7 @@ class _UserRepository implements UserRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -168,7 +167,7 @@ class _UserRepository implements UserRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'PUT',
       headers: _headers,
@@ -177,6 +176,31 @@ class _UserRepository implements UserRepository {
         .compose(
           _dio.options,
           'user/{userId}/password/${originPwd}/${newPwd}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<dynamic> updatePoint(
+    uid,
+    price,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'user/${uid}/exchange/${price}',
           queryParameters: queryParameters,
           data: _data,
         )

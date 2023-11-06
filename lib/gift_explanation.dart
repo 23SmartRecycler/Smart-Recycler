@@ -1,4 +1,13 @@
+import 'package:async/async.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
+import 'package:smartrecycler/UserPage/userRetrofit/UserRepository.dart';
+import 'package:smartrecycler/gift.dart';
+
+import 'UserPage/userRetrofit/User.dart';
 
 class GiftExplanationPage extends StatefulWidget {
   final String image;
@@ -7,7 +16,7 @@ class GiftExplanationPage extends StatefulWidget {
   final String? cost;
 
   // 위의 인자들은 이전 페이지에서 호출받을 때 전달받을 것임
-  const GiftExplanationPage(this.image, this.name, this.expireData, this.cost,{Key? key}):super(key: key);
+  const GiftExplanationPage(this.image, this.name, this.expireData, this.cost, {Key? key}):super(key: key);
 
   @override
   State<GiftExplanationPage> createState() => _GiftExplanationPageState();
@@ -30,11 +39,13 @@ class GiftExplanation extends StatefulWidget {
     this.name,
     this.expireData,
     this.cost,
+    this.uid,
 });
   final String? image;
   final String? name;
   final String? expireData;
   final String? cost;
+  final int? uid;
   //const GiftExplanation({super.key});
 
   @override
@@ -58,7 +69,7 @@ class _GiftExplanationState extends State<GiftExplanation> {
       body: ListView(children: [
         ItemImageBox(image:widget.image),
         ItemExplanationBox(name:widget.name, expireData:widget.expireData),
-        ExchangeButton(cost: widget.cost),
+        ExchangeButton(cost: widget.cost, uid:widget.uid),
       ],),
     );
   }
@@ -183,8 +194,10 @@ class ExchangeButton extends StatefulWidget {
   const ExchangeButton({
     super.key,
     this.cost,
+    this.uid,
   });
   final String? cost;
+  final int? uid;
   //const ExchangeButton({super.key});
 
   @override
@@ -202,7 +215,7 @@ class _ExchangeButtonState extends State<ExchangeButton> {
           child: ElevatedButton(
             onPressed: (){showDialog(
               context: context,
-              builder: (context) {return ExchangeDialog(cost:widget.cost);},
+              builder: (context) {return ExchangeDialog(cost:widget.cost, uid:widget.uid);},
               barrierDismissible: false ,);
             },
             child: Text('교환하기',style: TextStyle(fontSize: 18,color: Colors.white, fontWeight: FontWeight.w600,),),
@@ -222,16 +235,49 @@ class ExchangeDialog extends StatefulWidget {
   const ExchangeDialog({
     super.key,
     this.cost,
+    this.uid,
   });
   final String? cost;
+  final int? uid;
 
   @override
   State<ExchangeDialog> createState() => _ExchangeDialogState();
 }
 
-class _ExchangeDialogState extends State<ExchangeDialog> {
+class _ExchangeDialogState extends State<ExchangeDialog> with WidgetsBindingObserver {
+
+  //future 데이터 캐싱
+  final AsyncMemoizer _memoizer = AsyncMemoizer();
+  // userRepository
+  late final UserRepository _userRepository;
+  static const storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic userInfo = '';
+
+  @override
+  void initState(){
+    WidgetsBinding.instance.addObserver(this);
+    Dio dio = Dio();
+    _userRepository = UserRepository(dio);
+
+    super.initState();
+  }
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    userInfo = await storage.read(key: 'login');
+    if (userInfo != null) {
+      return userInfo;
+    }
+  }
+  Future<int> findUsersPoint() async{
+    int uid = int.parse(await _asyncMethod());
+    final User user = await _userRepository.getUser(uid);
+    return user.point!.toInt();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return AlertDialog(
       content: Container(padding: EdgeInsets.all(10),
           child:Column(mainAxisSize: MainAxisSize.min,
@@ -254,8 +300,8 @@ class _ExchangeDialogState extends State<ExchangeDialog> {
                   borderRadius: BorderRadius.circular(90)
               ),
               child: TextButton(
-                onPressed: (){Navigator.pop(context);},
-                child: Center(
+                onPressed: (){ update(); },
+                child: const Center(
                   child: Text('교환하기',
                     style: TextStyle(fontSize: 20,color: Colors.white, fontWeight: FontWeight.w600,),),
                 ),
@@ -279,5 +325,30 @@ class _ExchangeDialogState extends State<ExchangeDialog> {
           ],)
       ],
     );
+  }
+  void update() async {
+    int uid = int.parse(await _asyncMethod());
+    final update = await _userRepository.updatePoint(uid, int.parse(widget.cost!));
+    var logger = Logger();
+    logger.d(update.toString());
+    if(!update){
+      Fluttertoast.showToast(
+          msg: '잔여 포인트가 부족합니다.',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }else{
+      Fluttertoast.showToast(
+          msg: '구매 완료',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+      Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => GiftPage()));
+    }
   }
 }
