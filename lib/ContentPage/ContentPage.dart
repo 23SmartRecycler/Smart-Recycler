@@ -135,7 +135,7 @@ class ContentPage extends StatelessWidget {
                 FutureBuilder(
                     future: findUser(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData == false) {
+                      if (snapshot.data == null) {
                         return const CircularProgressIndicator();
                       }
                       else if (snapshot.hasError) {
@@ -185,8 +185,8 @@ class ContentPage extends StatelessWidget {
                 FutureBuilder<List<Content>>(
                     future: getContents(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      final List<Content> result = snapshot.data;
-                      if (snapshot.hasData == false) {
+
+                      if (snapshot.data == null) {
                         return const ListTile(
                             title: Center(child: CircularProgressIndicator()));
                       }
@@ -200,6 +200,7 @@ class ContentPage extends StatelessWidget {
                         );
                       }
                       else {
+                        final List<Content> result = snapshot.data;
                         return SizedBox(
                           height: 200,
                           child: IndexedStack(
@@ -240,8 +241,8 @@ class ContentPage extends StatelessWidget {
                 FutureBuilder<List<Content>>(
                     future: getContents(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      final List<Content> result = snapshot.data;
-                      if (snapshot.hasData == false) {
+
+                      if (snapshot.data == null) {
                         return const ListTile(
                             title: Center(child: CircularProgressIndicator()));
                       }
@@ -255,6 +256,7 @@ class ContentPage extends StatelessWidget {
                         );
                       }
                       else {
+                        final List<Content> result = snapshot.data;
                         return SizedBox(
                             height: 200,
                             child: IndexedStack(
