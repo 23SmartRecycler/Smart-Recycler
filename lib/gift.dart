@@ -214,12 +214,9 @@ class _GridItemsState extends State<GridItems> {
       child: FutureBuilder<List<GifticonItem>>(
         future: list(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          final List<GifticonItem> result = snapshot.data;
           //데이터가 없으면
-          if(snapshot. hasData == false){
-            return const ListTile(
-              title: Center(child: CircularProgressIndicator(),)
-            );
+          if(snapshot.data == null){
+            return const Center(child: CircularProgressIndicator(),);
           }
           else if(snapshot.hasError){
             return Padding(
@@ -230,6 +227,7 @@ class _GridItemsState extends State<GridItems> {
             );
           }
           else{
+            final List<GifticonItem> result = snapshot.data;
             return GridView.builder(
               //그리드 뷰 자동 스크롤 없애기
               physics: const NeverScrollableScrollPhysics(),
