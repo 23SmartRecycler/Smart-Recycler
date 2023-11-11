@@ -53,5 +53,10 @@
         	<string>Camera permission is required.</string>
         	<key>NSMicrophoneUsageDescription</key>
         	<string>Microphone permission is required.</string>
+         <key>LSApplicationQueriesSchemes</key>
+          <array>
+            <string>https</string>
+            <string>http</string>
+          </array>
 	</dict>
 </plist>

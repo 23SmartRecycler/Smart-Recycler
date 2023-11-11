@@ -13,7 +13,7 @@ class _ContentRepository implements ContentRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= serverUrl;
+    baseUrl ??= 'http://192.168.45.79:8080/v1/';
   }
 
   final Dio _dio;
@@ -48,7 +48,7 @@ class _ContentRepository implements ContentRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'DELETE',
       headers: _headers,
@@ -61,7 +61,6 @@ class _ContentRepository implements ContentRepository {
           data: _data,
         )
         .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    return null;
   }
 
   @override
@@ -69,7 +68,7 @@ class _ContentRepository implements ContentRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result =
         await _dio.fetch<List<dynamic>>(_setStreamType<List<Content>>(Options(
       method: 'GET',
@@ -86,6 +85,29 @@ class _ContentRepository implements ContentRepository {
     var value = _result.data!
         .map((dynamic i) => Content.fromJson(i as Map<String, dynamic>))
         .toList();
+    return value;
+  }
+
+  @override
+  Future<Content> getContent(cid) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Content>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'content/${cid}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Content.fromJson(_result.data!);
     return value;
   }
 

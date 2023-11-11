@@ -21,5 +21,6 @@ abstract class ContentRepository {
   @GET('contents/')
   Future<List<Content>> getContents();
 
-
+  @GET('content/{cid}')
+  Future<Content> getContent(@Path('cid')int cid);
 }
