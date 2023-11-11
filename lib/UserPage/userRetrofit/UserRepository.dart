@@ -33,4 +33,6 @@ abstract class UserRepository {
   @PUT('user/{userId}/password/{originPwd}/{newPwd}')
   Future updatePassword(@Path('uid') int uid, @Path('originPwd') String originPwd, @Path('newPwd') String newPwd);
 
+  @PUT('user/{uid}/exchange/{price}')
+  Future updatePoint(@Path('uid') int uid, @Path('price') int price);
 }
