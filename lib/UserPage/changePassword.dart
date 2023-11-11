@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 import 'package:smartrecycler/UserPage/login.dart';
 import 'package:smartrecycler/common/colors.dart';
-import 'package:smartrecycler/ContentPage/ContentPage.dart';
+import 'package:smartrecycler/ContentPage/contentPage.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 import 'userRetrofit/UserRepository.dart';

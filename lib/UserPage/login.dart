@@ -1,4 +1,3 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -10,16 +9,21 @@ import 'package:smartrecycler/common/colors.dart';
 import '../bottomNavi.dart';
 import 'userRetrofit/UserRepository.dart';
 
+
+void main() {
+  runApp(const LogInPage());
+}
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // debugShowCheckedModeBanner: false,
-      // title: 'Login',
-      // home: LogIn(),
-      body: LogIn(),
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: LogIn(),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartrecycler/UserPage/login.dart';
 import 'package:smartrecycler/UserPage/sign_up.dart';
 import 'package:smartrecycler/choice_main.dart';
-import 'package:smartrecycler/ContentPage/ContentPage.dart';
+import 'package:smartrecycler/ContentPage/contentPage.dart';
 import 'package:smartrecycler/gift.dart';
 import 'package:smartrecycler/gift_explanation.dart';
 import 'package:smartrecycler/profile.dart';
@@ -11,22 +11,19 @@ import 'package:smartrecycler/SearchPage/search.dart';
 import 'package:smartrecycler/SearchPage/search_result.dart';
 import 'package:smartrecycler/setting.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
-
+    return Scaffold(
+      // theme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      //   useMaterial3: true,
+      // ),
+      // home: const MyHomePage(),
     );
   }
 }

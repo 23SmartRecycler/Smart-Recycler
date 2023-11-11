@@ -13,7 +13,7 @@ class _GifticonRepository implements GifticonRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= serverUrl;
+    baseUrl ??= 'http://192.168.45.79:8080/v1/';
   }
 
   final Dio _dio;
@@ -48,7 +48,7 @@ class _GifticonRepository implements GifticonRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<List<dynamic>>(_setStreamType<List<GifticonItem>>(Options(
       method: 'GET',

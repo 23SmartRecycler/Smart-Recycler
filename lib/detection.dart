@@ -90,35 +90,11 @@ class _MyAppState extends State<MyApp> {
             child: const Icon(Icons.camera),
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
-            label: 'YoloV8seg on Image',
-            labelStyle: const TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                option = Options.imagev8seg;
-              });
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.camera),
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
             label: 'YoloV8 on Image',
             labelStyle: const TextStyle(fontSize: 18.0),
             onTap: () {
               setState(() {
                 option = Options.imagev8;
-              });
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.camera),
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-            label: 'YoloV5 on Image',
-            labelStyle: const TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                option = Options.imagev5;
               });
             },
           ),
@@ -155,14 +131,8 @@ class _MyAppState extends State<MyApp> {
     if (option == Options.frame) {
       return YoloVideo(vision: vision);
     }
-    if (option == Options.imagev5) {
-      return YoloImageV5(vision: vision);
-    }
     if (option == Options.imagev8) {
       return YoloImageV8(vision: vision);
-    }
-    if (option == Options.imagev8seg) {
-      return YoloImageV8Seg(vision: vision);
     }
     if (option == Options.tesseract) {
       return TesseractImage(vision: vision);
@@ -273,7 +243,7 @@ class _YoloVideoState extends State<YoloVideo> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/best_float32.tflite',
+        modelPath: 'assets/class_float32.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
@@ -346,156 +316,6 @@ class _YoloVideoState extends State<YoloVideo> {
   }
 }
 
-class YoloImageV5 extends StatefulWidget {
-  final FlutterVision vision;
-  const YoloImageV5({Key? key, required this.vision}) : super(key: key);
-
-  @override
-  State<YoloImageV5> createState() => _YoloImageV5State();
-}
-
-class _YoloImageV5State extends State<YoloImageV5> {
-  late List<Map<String, dynamic>> yoloResults;
-  File? imageFile;
-  int imageHeight = 1;
-  int imageWidth = 1;
-  bool isLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadYoloModel().then((value) {
-      setState(() {
-        yoloResults = [];
-        isLoaded = true;
-      });
-    });
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    if (!isLoaded) {
-      return const Scaffold(
-        body: Center(
-          child: Text("Model not loaded, waiting for it"),
-        ),
-      );
-    }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        imageFile != null ? Image.file(imageFile!) : const SizedBox(),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: pickImage,
-                child: const Text("Pick image"),
-              ),
-              ElevatedButton(
-                onPressed: yoloOnImage,
-                child: const Text("Detect"),
-              )
-            ],
-          ),
-        ),
-        ...displayBoxesAroundRecognizedObjects(size),
-      ],
-    );
-  }
-
-  Future<void> loadYoloModel() async {
-    await widget.vision.loadYoloModel(
-        labels: 'assets/labels.txt',
-        modelPath: 'assets/yolov5others.tflite',
-        modelVersion: "yolov5",
-        quantization: false,
-        numThreads: 2,
-        useGpu: true);
-    setState(() {
-      isLoaded = true;
-    });
-  }
-
-  Future<void> pickImage() async {
-    try{
-      final ImagePicker picker = ImagePicker();
-      // Capture a photo
-      final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
-      if (photo != null) {
-        setState(() {
-          imageFile = File(photo.path);
-        });
-      }
-    }catch(error){
-      print("error: $error");
-    }
-  }
-
-  yoloOnImage() async {
-    yoloResults.clear();
-    Uint8List byte = await imageFile!.readAsBytes();
-    final image = await decodeImageFromList(byte);
-    imageHeight = image.height;
-    imageWidth = image.width;
-    final result = await widget.vision.yoloOnImage(
-        bytesList: byte,
-        imageHeight: image.height,
-        imageWidth: image.width,
-        iouThreshold: 0.8,
-        confThreshold: 0.4,
-        classThreshold: 0.5);
-    if (result.isNotEmpty) {
-      setState(() {
-        yoloResults = result;
-      });
-    }
-  }
-
-  List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
-    if (yoloResults.isEmpty) return [];
-
-    double factorX = screen.width / (imageWidth);
-    double imgRatio = imageWidth / imageHeight;
-    double newWidth = imageWidth * factorX;
-    double newHeight = newWidth / imgRatio;
-    double factorY = newHeight / (imageHeight);
-
-    double pady = (screen.height - newHeight) / 2;
-
-    Color colorPick = const Color.fromARGB(255, 50, 233, 30);
-    return yoloResults.map((result) {
-      return Positioned(
-        left: result["box"][0] * factorX,
-        top: result["box"][1] * factorY + pady,
-        width: (result["box"][2] - result["box"][0]) * factorX,
-        height: (result["box"][3] - result["box"][1]) * factorY,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            border: Border.all(color: Colors.pink, width: 2.0),
-          ),
-          child: Text(
-            "${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(0)}%",
-            style: TextStyle(
-              background: Paint()..color = colorPick,
-              color: Colors.white,
-              fontSize: 18.0,
-            ),
-          ),
-        ),
-      );
-    }).toList();
-  }
-}
 
 class YoloImageV8 extends StatefulWidget {
   final FlutterVision vision;
@@ -567,7 +387,7 @@ class _YoloImageV8State extends State<YoloImageV8> {
     try{
       await widget.vision.loadYoloModel(
           labels: 'assets/labels.txt',
-          modelPath: 'assets/best_float32.tflite',
+          modelPath: 'assets/class_float32.tflite',
           modelVersion: "yolov8",
           quantization: false,
           numThreads: 2,
@@ -650,168 +470,6 @@ class _YoloImageV8State extends State<YoloImageV8> {
   }
 }
 
-class YoloImageV8Seg extends StatefulWidget {
-  final FlutterVision vision;
-  const YoloImageV8Seg({Key? key, required this.vision}) : super(key: key);
-
-  @override
-  State<YoloImageV8Seg> createState() => _YoloImageV8SegState();
-}
-
-class _YoloImageV8SegState extends State<YoloImageV8Seg> {
-  late List<Map<String, dynamic>> yoloResults;
-  File? imageFile;
-  int imageHeight = 1;
-  int imageWidth = 1;
-  bool isLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadYoloModel().then((value) {
-      setState(() {
-        yoloResults = [];
-        isLoaded = true;
-      });
-    });
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    if (!isLoaded) {
-      return const Scaffold(
-        body: Center(
-          child: Text("Model not loaded, waiting for it"),
-        ),
-      );
-    }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        imageFile != null ? Image.file(imageFile!) : const SizedBox(),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: pickImage,
-                child: const Text("Pick image"),
-              ),
-              ElevatedButton(
-                onPressed: yoloOnImage,
-                child: const Text("Detect"),
-              )
-            ],
-          ),
-        ),
-        ...displayBoxesAroundRecognizedObjects(size),
-      ],
-    );
-  }
-
-  Future<void> loadYoloModel() async {
-    await widget.vision.loadYoloModel(
-        labels: 'assets/labels.txt',
-        modelPath: 'assets/best_float16.tflite',
-        modelVersion: "yolov8",
-        quantization: false,
-        numThreads: 2,
-        useGpu: true);
-    setState(() {
-      isLoaded = true;
-    });
-  }
-
-  Future<void> pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    // Capture a photo
-    final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
-    if (photo != null) {
-      setState(() {
-        imageFile = File(photo.path);
-      });
-    }
-  }
-
-  yoloOnImage() async {
-    yoloResults.clear();
-    Uint8List byte = await imageFile!.readAsBytes();
-    final image = await decodeImageFromList(byte);
-    imageHeight = image.height;
-    imageWidth = image.width;
-    final result = await widget.vision.yoloOnImage(
-        bytesList: byte,
-        imageHeight: image.height,
-        imageWidth: image.width,
-        iouThreshold: 0.8,
-        confThreshold: 0.4,
-        classThreshold: 0.5);
-    if (result.isNotEmpty) {
-      setState(() {
-        yoloResults = result;
-      });
-    }
-  }
-
-  List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
-    if (yoloResults.isEmpty) return [];
-
-    double factorX = screen.width / (imageWidth);
-    double imgRatio = imageWidth / imageHeight;
-    double newWidth = imageWidth * factorX;
-    double newHeight = newWidth / imgRatio;
-    double factorY = newHeight / (imageHeight);
-
-    double pady = (screen.height - newHeight) / 2;
-
-    Color colorPick = const Color.fromARGB(255, 50, 233, 30);
-    return yoloResults.map((result) {
-      return Stack(children: [
-        Positioned(
-          left: result["box"][0] * factorX,
-          top: result["box"][1] * factorY + pady,
-          width: (result["box"][2] - result["box"][0]) * factorX,
-          height: (result["box"][3] - result["box"][1]) * factorY,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-              border: Border.all(color: Colors.pink, width: 2.0),
-            ),
-            child: Text(
-              "${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(0)}%",
-              style: TextStyle(
-                background: Paint()..color = colorPick,
-                color: Colors.white,
-                fontSize: 18.0,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-            left: result["box"][0] * factorX,
-            top: result["box"][1] * factorY + pady,
-            width: (result["box"][2] - result["box"][0]) * factorX,
-            height: (result["box"][3] - result["box"][1]) * factorY,
-            child: CustomPaint(
-              painter: PolygonPainter(
-                  points: (result["polygons"] as List<dynamic>).map((e) {
-                    Map<String, double> xy = Map<String, double>.from(e);
-                    xy['x'] = (xy['x'] as double) * factorX;
-                    xy['y'] = (xy['y'] as double) * factorY;
-                    return xy;
-                  }).toList()),
-            )),
-      ]);
-    }).toList();
-  }
-}
 
 class PolygonPainter extends CustomPainter {
   final List<Map<String, double>> points;

@@ -13,7 +13,7 @@ class _RmethodRepository implements RmethodRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= serverUrl;
+    baseUrl ??= 'http://192.168.45.79:8080/v1/';
   }
 
   final Dio _dio;
@@ -47,7 +47,7 @@ class _RmethodRepository implements RmethodRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'DELETE',
       headers: _headers,
@@ -60,7 +60,6 @@ class _RmethodRepository implements RmethodRepository {
           data: _data,
         )
         .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    return null;
   }
 
   @override
@@ -68,7 +67,7 @@ class _RmethodRepository implements RmethodRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<List<dynamic>>(_setStreamType<List<RmethodParams>>(Options(
       method: 'GET',
@@ -93,7 +92,7 @@ class _RmethodRepository implements RmethodRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
     final _result =
         await _dio.fetch<Map<String, dynamic>>(_setStreamType<Rmethod>(Options(
       method: 'GET',

@@ -1,10 +1,12 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrecycler/common/colors.dart';
-import 'package:smartrecycler/ContentPage/ContentPage.dart';
+import 'package:smartrecycler/ContentPage/contentPage.dart';
 import 'package:smartrecycler/gift.dart';
 import 'package:smartrecycler/profile.dart';
 import 'package:smartrecycler/setting.dart';
+
+import 'choice_main.dart';
 
 
 class BottomNaviPage extends StatelessWidget {
@@ -60,6 +62,7 @@ class _BottomNaviState extends State<BottomNavi> {
     ),
     backgroundColor: mainGreen,
     onPressed: () {
+       Navigator.push(context, MaterialPageRoute(builder: (context) => ChoicePage()));
     },
     ),
     floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

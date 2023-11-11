@@ -29,7 +29,7 @@ GifticonItem _$GifticonItemFromJson(Map<String, dynamic> json) => GifticonItem(
 
 Map<String, dynamic> _$GifticonItemToJson(GifticonItem instance) =>
     <String, dynamic>{
-      'gid' : instance.gid,
+      'gid': instance.gid,
       'gimage': instance.gimage,
       'gname': instance.gname,
       'uid': instance.uid,
