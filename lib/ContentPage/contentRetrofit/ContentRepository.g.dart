@@ -13,7 +13,7 @@ class _ContentRepository implements ContentRepository {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://192.168.45.79:8080/v1/';
+    baseUrl ??= serverUrl;
   }
 
   final Dio _dio;
