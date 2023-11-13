@@ -140,10 +140,14 @@ class _YoloVideoState extends State<YoloVideo> {
 
   init() async {
     cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    controller = CameraController(cameras[0], ResolutionPreset.max);
     controller.initialize().then((value) {
       loadYoloModel().then((value) {
+        if (!mounted) {
+          return;
+        }
         setState(() {
+
           isLoaded = true;
           isDetecting = false;
           yoloResults = [];
@@ -152,10 +156,11 @@ class _YoloVideoState extends State<YoloVideo> {
     });
   }
 
+
   @override
   void dispose() async {
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -244,22 +249,27 @@ class _YoloVideoState extends State<YoloVideo> {
   }
 
   Future<void> startDetection() async {
+
     setState(() {
       isDetecting = true;
     });
+
     await controller.startImageStream((image) async {
       if (isDetecting) {
         cameraImage = image;
         yoloOnFrame(image);
       }
     });
+
   }
 
   Future<void> stopDetection() async {
-    setState(() {
-      isDetecting = false;
-      yoloResults.clear();
-    });
+    if(isDetecting){
+      setState(() {
+        isDetecting = false;
+        yoloResults.clear();
+      });
+    }
   }
 
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
