@@ -98,30 +98,6 @@ class _MyAppState extends State<MyApp> {
               });
             },
           ),
-          SpeedDialChild(
-            child: const Icon(Icons.text_snippet_outlined),
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.green,
-            label: 'Tesseract',
-            labelStyle: const TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                option = Options.tesseract;
-              });
-            },
-          ),
-          // SpeedDialChild(
-          //   child: const Icon(Icons.document_scanner),
-          //   foregroundColor: Colors.white,
-          //   backgroundColor: Colors.green,
-          //   label: 'Vision',
-          //   labelStyle: const TextStyle(fontSize: 18.0),
-          //   onTap: () {
-          //     setState(() {
-          //       option = Options.vision;
-          //     });
-          //   },
-          // ),
         ],
       ),
     );
@@ -243,7 +219,7 @@ class _YoloVideoState extends State<YoloVideo> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/class_float32.tflite',
+        modelPath: 'assets/new_float32_N.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
@@ -387,7 +363,7 @@ class _YoloImageV8State extends State<YoloImageV8> {
     try{
       await widget.vision.loadYoloModel(
           labels: 'assets/labels.txt',
-          modelPath: 'assets/class_float32.tflite',
+          modelPath: 'assets/new_float32_N.tflite',
           modelVersion: "yolov8",
           quantization: false,
           numThreads: 2,
