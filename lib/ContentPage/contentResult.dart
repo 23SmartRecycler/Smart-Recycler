@@ -103,7 +103,7 @@ class _ContentResultState extends State<ContentResult> {
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '링크',
+                                  text: '${result.slink}',
                                   style: TextStyle(
                                     color: Colors.blueAccent,
                                     fontSize: 15,

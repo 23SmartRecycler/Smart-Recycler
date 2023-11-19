@@ -58,13 +58,15 @@ class _GiftExplanationState extends State<GiftExplanation> {
     return Scaffold(
       appBar : AppBar(
         backgroundColor: Colors.green,
-        leading: SizedBox(
-          width: 1000,
-          child: TextButton(onPressed: (){Navigator.pop(context);},
-            child: Text('뒤로 가기',style: TextStyle(color: Colors.white,),),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);//뒤로가기
+          },
+          color: Colors.white,
         ),
         title: Text('기프티콘',style: TextStyle(color: Colors.white,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
+        centerTitle: true,
       ),
       body: ListView(children: [
         ItemImageBox(image:widget.image),
