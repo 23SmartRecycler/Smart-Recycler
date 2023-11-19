@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smartrecycler/detection.dart';
 
+import 'common/colors.dart';
+
 
 class ChoicePage extends StatelessWidget {
   const ChoicePage({super.key});
@@ -29,63 +31,29 @@ class Choice_main extends StatelessWidget {
         backgroundColor: Colors.green,
         //centerTitle: true,
       ),
-      body: Grid_box(),
-    );
-  }
-}
-
-// RecycleItems
-final List<String> names = ['플라스틱','종이','유리병','캔'];
-final List<String> images = [
-  'assets/images/plastic.png',
-  'assets/images/paper.png',
-  'assets/images/glass.png',
-  'assets/images/can.png'
-];
-
-
-class Grid_box extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
-      child: GridView.builder(
-        //그리드 뷰 자동 스크롤 없애기
-        //physics: const NeverScrollableScrollPhysics(),
-        
-        itemCount: 4,                   // 전체 아이템 수
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,            // 1행에 보여줄 아이템 수
-          childAspectRatio: 1/1,        // item 의 가로 1, 세로 1 의 비율
-          mainAxisSpacing: 10,          // 수평 padding
-          crossAxisSpacing: 10,         // 수직 padding
-        ),
-
-        itemBuilder: (BuildContext context, int index) {
-          return InkWell( // 클릭하면 애니매이션 효과 나옴(필요없으면 GestureDetector사용)
-
-            onTap:() {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Detection()));
-            },  //클릭했을 때 해당 카메라 촬영(detection)으로 이동해야 함
-
-            child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('${images[index]}'),
-                ),
-                borderRadius: BorderRadius.circular(20)
+      body: Align(
+          alignment: Alignment.center,
+        child:SingleChildScrollView(
+          child:Column(
+            children:<Widget> [
+              TextButton.icon(onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyApp(id: 0)));},
+                icon: Icon(Icons.recycling),
+                label: Text('pollution detection'),
+                style: TextButton.styleFrom(primary: mainGreen, textStyle: TextStyle(fontSize: 20,fontFamily: 'Pretendard',fontWeight: FontWeight.w600),),
               ),
-              child: Text(
-                '${names[index]}',
-                style: TextStyle(fontSize: 20,fontWeight: FontWeight.w900)
+              SizedBox(height: 30.0,),
+              TextButton.icon(onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyApp(id: 1)));},
+                icon: Icon(Icons.delete),
+                label: Text('class detection'),
+                style: TextButton.styleFrom(primary: mainGreen, textStyle: TextStyle(fontSize: 20, fontFamily: 'Pretendard',fontWeight: FontWeight.w600),),
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        )
       ),
     );
   }

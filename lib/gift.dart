@@ -2,6 +2,7 @@ import 'package:async/async.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:smartrecycler/common/colors.dart';
 import 'package:smartrecycler/gift_explanation.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
@@ -22,13 +23,15 @@ class _GiftPageState extends State<GiftPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: SizedBox(
-          width: 1000,
-          child: TextButton(onPressed: (){Navigator.pop(context);},
-            child: const Text('뒤로 가기',style: TextStyle(color: Colors.green,),),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);//뒤로가기
+          },
+          color: mainGreen,
         ),
         title: const Text('교환하기',style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
+        centerTitle: true,
         actions: [TextButton(onPressed: (){}, child: const Text('추가 하기',style: TextStyle(color: Colors.green,),))],
       ),
       body: const SingleChildScrollView(

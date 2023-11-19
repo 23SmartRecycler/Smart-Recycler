@@ -2,6 +2,7 @@ import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:smartrecycler/ContentPage/contentResult.dart';
 import 'package:smartrecycler/ContentPage/contentRetrofit/Content.dart';
 import 'package:smartrecycler/ContentPage/contentRetrofit/ContentRepository.dart';
 import 'package:smartrecycler/SearchPage/search.dart';
@@ -202,7 +203,7 @@ class ContentPage extends StatelessWidget {
                       else {
                         final List<Content> result = snapshot.data;
                         return SizedBox(
-                          height: 200,
+                          height: 450,
                           child: IndexedStack(
                               children: [
                           TransformableListView.builder(
@@ -219,74 +220,20 @@ class ContentPage extends StatelessWidget {
                                 return const Divider();
                               }
                               return ListTile(
+                                onTap: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ContentResult(cid: content.cid!.toInt(),)
+                                      )
+                                  );
+                                },
                                   title: Text(content.title.toString()),
-                                  subtitle: Text(content.content.toString())
+                                  subtitle: Text(content.content.toString(),maxLines: 2,)
                               );
                             },
                           )]
                           )
-                        );
-                      }
-                    }
-                ),
-                Container(
-                    margin: const EdgeInsets.all(12),
-                    alignment: Alignment.bottomLeft,
-                    child: const Text(
-                      '동네 소식', style: TextStyle(color: Colors.black,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 24),)
-                ),
-                FutureBuilder<List<Content>>(
-                    future: getContents(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-
-                      if (snapshot.data == null) {
-                        return const ListTile(
-                            title: Center(child: CircularProgressIndicator()));
-                      }
-                      else if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        );
-                      }
-                      else {
-                        final List<Content> result = snapshot.data;
-                        return SizedBox(
-                            height: 200,
-                            child: IndexedStack(
-                                children: [
-                                  ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.all(8.0),
-                                    itemCount: _maxLength == null ? 0 : _maxLength * 2,
-                                    itemBuilder: (context, index) {
-                                      final content = result![index ~/ 2];
-                                      if (index.isOdd) {
-                                        return const Divider();
-                                      }
-                                      return Container(
-                                        width: 150,
-                                        color: mainGreen,//배경색
-                                        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-                                        child: ListTile(
-                                            visualDensity: VisualDensity(vertical: -4, horizontal: 0),
-                                            dense: true,
-                                            tileColor: mainGreen,
-                                            title:Text(content.title.toString()),
-                                            subtitle:Text(content.content.toString()),
-                                          onTap: () {},
-                                        ),
-                                      );
-                                    },
-                                  )]
-                            )
                         );
                       }
                     }
