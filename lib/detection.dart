@@ -5,9 +5,12 @@ import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+
 
 enum Options { none, imagev5, imagev8, imagev8seg, frame, tesseract, vision }
 
@@ -132,6 +135,10 @@ class _YoloVideoState extends State<YoloVideo> {
   bool isLoaded = false;
   bool isDetecting = false;
 
+  ImagePicker imagePicker = new ImagePicker();
+  GlobalKey<ScaffoldState> gKey = GlobalKey<ScaffoldState>();
+  GlobalKey scr = new GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -182,39 +189,48 @@ class _YoloVideoState extends State<YoloVideo> {
             controller,
           ),
         ),
+
         ...displayBoxesAroundRecognizedObjects(size),
+
         Positioned(
           bottom: 75,
           width: MediaQuery.of(context).size.width,
-          child: Container(
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                  width: 5, color: Colors.white, style: BorderStyle.solid),
-            ),
-            child: isDetecting
-                ? IconButton(
-              onPressed: () async {
-                stopDetection();
-              },
-              icon: const Icon(
-                Icons.stop,
-                color: Colors.red,
+          child: Column(
+            children: [
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      width: 5, color: Colors.white, style: BorderStyle.solid),
+                ),
+                child: isDetecting
+                    ? IconButton(
+                  onPressed: () async {
+                    stopDetection();
+                  },
+                  icon: const Icon(
+                    Icons.stop,
+                    color: Colors.red,
+                  ),
+                  iconSize: 50,
+                )
+                    : IconButton(
+                  onPressed: () async {
+                    await startDetection();
+                  },
+                  icon: const Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                  iconSize: 50,
+                ),
               ),
-              iconSize: 50,
-            )
-                : IconButton(
-              onPressed: () async {
-                await startDetection();
-              },
-              icon: const Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-              ),
-              iconSize: 50,
-            ),
+              TextButton(onPressed: () async{
+                capture();
+              }, child: Text("Capture")),
+            ],
           ),
         ),
       ],
@@ -272,6 +288,21 @@ class _YoloVideoState extends State<YoloVideo> {
     }
   }
 
+  void capture() async {
+    if(isDetecting){
+      if(yoloResults.isNotEmpty){
+
+        print(yoloResults);
+        // final RenderRepaintBoundary boundary = scr.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+        // final ui.Image image = await boundary.toImage();
+        // final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        // final Uint8List pngBytes = byteData!.buffer.asUint8List();
+        // print(pngBytes);
+      }
+      else print("yoloResult is Empty");
+    }
+  }
+
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
     double factorX = screen.width / (cameraImage?.height ?? 1);
     double factorY = screen.height / (cameraImage?.width ?? 1);
@@ -279,24 +310,26 @@ class _YoloVideoState extends State<YoloVideo> {
     return yoloResults.map((result) {
       print("${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(0)}%");
       return Positioned(
-        left: result["box"][0] * factorX,
-        top: result["box"][1] * factorY,
-        width: (result["box"][2] - result["box"][0]) * factorX,
-        height: (result["box"][3] - result["box"][1]) * factorY,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            border: Border.all(color: Colors.pink, width: 2.0),
-          ),
-          child: Text(
-            "${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(0)}%",
-            style: TextStyle(
-              background: Paint()..color = colorPick,
-              color: Colors.white,
-              fontSize: 18.0,
+          left: result["box"][0] * factorX,
+          top: result["box"][1] * factorY,
+          width: (result["box"][2] - result["box"][0]) * factorX,
+          height: (result["box"][3] - result["box"][1]) * factorY,
+          child: RepaintBoundary(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                border: Border.all(color: Colors.pink, width: 2.0),
+              ),
+              child: Text(
+                "${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(0)}%",
+                style: TextStyle(
+                  background: Paint()..color = colorPick,
+                  color: Colors.white,
+                  fontSize: 18.0,
+                ),
+              ),
             ),
           ),
-        ),
       );
     }).toList();
   }
