@@ -308,6 +308,8 @@ class YoloPollution extends StatefulWidget {
 class _YoloImageV8State extends State<YoloPollution> {
   late CameraController controller;
   late List<Map<String, dynamic>> yoloResults;
+  late List<List<Map<String,dynamic>>> result;
+  late List<XFile> images;
   CameraImage? cameraImage;
   bool isLoaded = false;
   bool isDetecting = false;
@@ -456,11 +458,18 @@ class _YoloImageV8State extends State<YoloPollution> {
 
   }
 
+  Future<void> takePicture() async {
+    final image = controller.takePicture();
+  }
+
   Future<void> stopDetection() async {
     if(isDetecting){
       setState(() {
         isDetecting = false;
+        //여기에 보내는 명령어 필요
         yoloResults.clear();
+        result.clear();
+        images.clear();
       });
     }
   }
@@ -468,13 +477,10 @@ class _YoloImageV8State extends State<YoloPollution> {
   void capture() async {
     if(isDetecting){
       if(yoloResults.isNotEmpty){
-
+        result.add(yoloResults);
         print(yoloResults);
-        // final RenderRepaintBoundary boundary = scr.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-        // final ui.Image image = await boundary.toImage();
-        // final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        // final Uint8List pngBytes = byteData!.buffer.asUint8List();
-        // print(pngBytes);
+        final image = await controller.takePicture();
+        images.add(image);
       }
       else print("yoloResult is Empty");
     }
