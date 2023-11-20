@@ -52,6 +52,7 @@ dependencies:
 
   flutter_vision: ^1.1.4
   flutter_speed_dial: ^7.0.0
+  image_cropper: ^4.0.1
 
 dev_dependencies:
   flutter_test:
