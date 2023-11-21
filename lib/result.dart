@@ -1,14 +1,77 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+
 class ResultPage extends StatelessWidget {
-  const ResultPage({super.key});
+  final List<List<Map<String, dynamic>>> result;
+  final List<String> image;
+
+  // 위의 인자들은 이전 페이지에서 호출받을 때 전달받을 것임
+  const ResultPage(this.result, this.image, {Key? key}):super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    setResult();
     return Scaffold(
       body: Result(),
     );
+  }
+
+  void setResult(){
+    /**
+    * 잘 전달 받았는지 확인
+    **/
+    if(result.isNotEmpty){
+      print(result);
+    }
+    else {
+      print("result is Empty");
+    }
+    if(image.isNotEmpty){
+      print(image);
+    }
+    else{
+      print("image is Empty");
+    }
+    MainList.clear();
+    ElseList.clear();
+    /**
+    * TrashList로 변경
+    * */
+    result.forEach((element) {
+      int idx = 0;
+      //한번 캡쳐할 때 있던 애들
+      /**
+       *  box, tag, image
+       * **/
+      bool isPolluted = false;
+      String type = "";
+      String explanation = "NULL";
+      //CameraImage image = element[0]["image"];
+      String i = image[idx++];
+
+      element.forEach((element) {
+        if(element["tag"]=="plastic"){
+          type = element["tag"];
+          //image = element["image"];
+        }
+        else{
+          isPolluted = true;
+          explanation = "오염물을 제거해야 합니다.";
+        }
+      });
+      if(isPolluted){
+        ElseList.add({"type": type, "explanation": explanation, "image" : i});
+      }
+      else{
+        MainList.add({"type": type, "explanation": explanation, "image" : i});
+      }
+    });
+
   }
 }
 
@@ -179,18 +242,18 @@ final TrashList = [
 // 위의 리스트가 아래 두개로 분류됨.
 // explanation == NULL
 final MainList = [
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
+  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
+  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
+  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
+  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
+  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
+  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
 ];
 final ElseList = [
-  {"type": "can", "explanation": "잘못된 분류입니다."},
-  {"type": "can", "explanation": "잘못된 분류입니다."},
-  {"type": "plastic", "explanation": "오염물을 제거해야 합니다."},
-  {"type": "glass", "explanation": "잘못된 분류입니다."},
+  // {"type": "can", "explanation": "잘못된 분류입니다.", "image": "assets/images/paper.png"},
+  // {"type": "can", "explanation": "잘못된 분류입니다.", "image": "assets/images/paper.png"},
+  // {"type": "plastic", "explanation": "오염물을 제거해야 합니다.", "image": "assets/images/paper.png"},
+  // {"type": "glass", "explanation": "잘못된 분류입니다.", "image": "assets/images/paper.png"},
 ];
 
 class CorrectPanel extends StatefulWidget {
@@ -226,7 +289,8 @@ class _CorrectPanelState extends State<CorrectPanel> {
                         padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
                         child: Text('플라스틱', style: TextStyle(fontSize: 18))
                     ),),
-                    Text('6개'),
+
+                    Text('${MainList.length}개'),
                   ],
                 ),
               );
@@ -246,7 +310,7 @@ class _CorrectPanelState extends State<CorrectPanel> {
                       padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
                       child: Text('else', style: TextStyle(fontSize: 18))
                   ),),
-                  Text('4개'),
+                  Text('${ElseList.length}개'),
                 ],
               ),
             );},
@@ -293,17 +357,28 @@ class _CorrectContainerState extends State<CorrectContainer> {
 
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,        // 한 행에 들어갈 위젯 수
-          childAspectRatio: 1/1,    // 위젯의 가로 세로 비율
+          childAspectRatio: 1/2,    // 위젯의 가로 세로 비율
           crossAxisSpacing: 20,     // 한 행의 위젯 간 간격 -> 이걸로 위젯 크기 조절
           mainAxisSpacing: 20,      // 한 열의 위젯 간 간격
         ),
 
-        itemBuilder: (context, index) => Container(
-          decoration: BoxDecoration(
-            color: Colors.black12,
-            borderRadius: BorderRadius.circular(20),
+        itemBuilder: (context, index) => AspectRatio(
+          aspectRatio: 1/1,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black12,
+              borderRadius: BorderRadius.circular(20),
+
+            ),
+            child: Column(
+              children: [
+                Text('${MainList[index]["type"]}'),
+                Image.file(
+                  File(MainList[index]["image"]!),
+                ),
+              ],
+            ),
           ),
-          child: Text('${MainList[index]["type"]}'),
         ),
       )
     );
@@ -343,6 +418,7 @@ class _IncorrectContainerState extends State<IncorrectContainer> {
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.black12
                     ),
+                  child: Image.file(File(ElseList[index]["image"]!)),
                 ),
                 /*
                 * 분류와 설명

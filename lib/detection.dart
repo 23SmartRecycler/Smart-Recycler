@@ -10,6 +10,10 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:smartrecycler/result.dart';
+
+import 'package:image/image.dart' as imglib;
+import 'package:camera/camera.dart';
 
 
 enum Options { none, imagev8, frame, tesseract, vision }
@@ -308,8 +312,8 @@ class YoloPollution extends StatefulWidget {
 class _YoloImageV8State extends State<YoloPollution> {
   late CameraController controller;
   late List<Map<String, dynamic>> yoloResults;
-  late List<List<Map<String,dynamic>>> result;
-  late List<XFile> images;
+  late List<List<Map<String,dynamic>>> result = [];
+  late List<XFile> images = [];
   CameraImage? cameraImage;
   bool isLoaded = false;
   bool isDetecting = false;
@@ -436,6 +440,9 @@ class _YoloImageV8State extends State<YoloPollution> {
         iouThreshold: 0.4,
         confThreshold: 0.4,
         classThreshold: 0.5);
+    result.forEach((element) {
+      element["image"] = cameraImage;
+    });
     if (result.isNotEmpty) {
       setState(() {
         yoloResults = result;
@@ -444,6 +451,10 @@ class _YoloImageV8State extends State<YoloPollution> {
   }
 
   Future<void> startDetection() async {
+
+    yoloResults.clear();
+    result.clear();
+    images.clear();
 
     setState(() {
       isDetecting = true;
@@ -463,13 +474,40 @@ class _YoloImageV8State extends State<YoloPollution> {
   }
 
   Future<void> stopDetection() async {
+    if(result.isNotEmpty){
+      print(result);
+    }
+    else {
+      print("result is Empty");
+    }
+    if(images.isNotEmpty){
+      print(images);
+    }
+    else{
+      print("image is Empty");
+    }
+    final List<List<Map<String,dynamic>>> r = result;
+    final List<String> i = [];
+    images.forEach((element) {
+      i.add(element.path);
+    });
+
+    print("r : ");
+    print(r);
+    print("i : ");
+    print(i);
     if(isDetecting){
       setState(() {
         isDetecting = false;
         //여기에 보내는 명령어 필요
-        yoloResults.clear();
-        result.clear();
-        images.clear();
+
+
+
+        Navigator.push(context,
+            MaterialPageRoute(
+                builder: (context) => ResultPage(r,i))
+        );
+
       });
     }
   }
@@ -481,6 +519,11 @@ class _YoloImageV8State extends State<YoloPollution> {
         print(yoloResults);
         final image = await controller.takePicture();
         images.add(image);
+        print("success capture");
+        print("yoloResults : ");
+        print(yoloResults);
+        print("image : ");
+        print(image);
       }
       else print("yoloResult is Empty");
     }

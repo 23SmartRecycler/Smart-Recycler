@@ -85,7 +85,7 @@ class Pages extends StatelessWidget {
         ],),
         Text('민수'),
         Row(children: [
-          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage()));}, child: Text('Result')),
+          //TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage()));}, child: Text('Result')),
 //          TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultDetailPage()));}, child: Text('ResultDetail')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()));}, child: Text('Search')),
           TextButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultPage()));}, child: Text('SearchResult')),

@@ -54,6 +54,9 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   image_cropper: ^4.0.1
 
+  #캐쉬 이미지 사용
+  cached_network_image: ^3.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
