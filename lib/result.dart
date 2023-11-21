@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
@@ -15,12 +14,44 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    setPolluted();
     setResult();
     return Scaffold(
       body: Result(),
     );
   }
+  void setPolluted(){
+    result.forEach((element) {
+      //한번 캡쳐할 때 있던 애들
+      /**
+       *  element = 한번 찍을 때 있던 요소들 [{box, tag, image} , {box, tag, image}]
+       *  feachers = 하나의 바운딩 박스
+       * **/
 
+      element.forEach((feachers) {
+        feachers["polluted"] = false;
+        if (feachers["tag"] == "plastic") {
+          element.forEach((others) {
+            if (others["tag"] == "plastic_pollution" ||
+                others["tag"] == "plastic_sticker" ||
+                others["tag"] == "paper") {
+              print("find ${others["tag"]}!!!!");
+              print(others["box"]);
+              double midx = (others["box"][2] + others["box"][0]) / 2;
+              double midy = (others["box"][3] + others["box"][1]) / 2;
+              print("midx : $midx  midy : $midy ");
+              if (midx > feachers["box"][0] && midx < feachers["box"][2] &&
+                  midy > feachers["box"][1] && midy < feachers["box"][3]) {
+                feachers["polluted"] = true;
+              }
+            }
+          });
+        }
+      });
+    });
+
+  }
   void setResult(){
     /**
     * 잘 전달 받았는지 확인
@@ -37,41 +68,53 @@ class ResultPage extends StatelessWidget {
     else{
       print("image is Empty");
     }
+
+
     MainList.clear();
+    CanList.clear();
+    GlassList.clear();
+    PaperList.clear();
     ElseList.clear();
     /**
     * TrashList로 변경
     * */
+    int idx = 0;
     result.forEach((element) {
-      int idx = 0;
       //한번 캡쳐할 때 있던 애들
       /**
        *  box, tag, image
        * **/
-      bool isPolluted = false;
       String type = "";
-      String explanation = "NULL";
-      //CameraImage image = element[0]["image"];
-      String i = image[idx++];
+      String i = image[idx];
 
-      element.forEach((element) {
-        if(element["tag"]=="plastic"){
-          type = element["tag"];
-          //image = element["image"];
-        }
-        else{
-          isPolluted = true;
-          explanation = "오염물을 제거해야 합니다.";
+      element.forEach((feachers) {
+        String explanation = "NULL";
+
+        if(feachers["tag"]!="plastic_pollution" && feachers["tag"] != "plastic_sticker"){
+          if(feachers["polluted"] == true){
+            explanation = "오염물을 제거해야 합니다.";
+          }
+          type = feachers["tag"];
+
+          if(feachers["polluted"]){
+            ElseList.add({"type": type, "explanation": explanation, "image" : i});
+          }
+          else if (feachers["tag"] == "plastic"){
+            MainList.add({"type": type, "explanation": explanation, "image" : i});
+          }
+          else if (feachers["tag"] == "can"){
+            CanList.add({"type": type, "explanation": explanation, "image" : i});
+          }
+          else if (feachers["tag"] == "glass"){
+            GlassList.add({"type": type, "explanation": explanation, "image" : i});
+          }
+          else {
+            PaperList.add({"type": type, "explanation": explanation, "image" : i});
+          }
         }
       });
-      if(isPolluted){
-        ElseList.add({"type": type, "explanation": explanation, "image" : i});
-      }
-      else{
-        MainList.add({"type": type, "explanation": explanation, "image" : i});
-      }
+      idx++;
     });
-
   }
 }
 
@@ -115,8 +158,10 @@ class ResultBars extends StatefulWidget {
 }
 
 class _ResultBarsState extends State<ResultBars> {
+
   @override
   Widget build(BuildContext context) {
+    int total = calcTotal();
     return Container(
       margin: EdgeInsets.all(30), padding: EdgeInsets.all(10),
       height: 250,
@@ -126,10 +171,10 @@ class _ResultBarsState extends State<ResultBars> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.black12, style: BorderStyle.solid)
       ),
-      child: const Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           /*
-          * 기준 분류와 동일한 쓰레기 Bar
+          * 플라스틱으로 분류된 쓰레기 Bar
           * */
           Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -138,8 +183,8 @@ class _ResultBarsState extends State<ResultBars> {
               child: StepProgressIndicator(
                 roundedEdges: Radius.circular(10),
                 size: 10,
-                totalSteps: 10,
-                currentStep: 6,
+                totalSteps: total,
+                currentStep: MainList.length,
                 unselectedColor: Color(0x28000000),
                 selectedColor: Colors.green,
                 direction: Axis.vertical,
@@ -150,7 +195,7 @@ class _ResultBarsState extends State<ResultBars> {
             Flexible(flex: 2, child: Text('플라스틱',)),
           ],),
           /*
-          * 기준 분류와 다르게 분류된 쓰레기 Bar
+          * 캔으로 분류된 쓰레기 Bar
           * */
           Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -159,8 +204,8 @@ class _ResultBarsState extends State<ResultBars> {
               child: StepProgressIndicator(
                 roundedEdges: Radius.circular(10),
                 size: 10,
-                totalSteps: 10,
-                currentStep: 4,
+                totalSteps: total,
+                currentStep: CanList.length,
                 unselectedColor: Color(0x28000000),
                 selectedColor: Colors.green,
                 direction: Axis.vertical,             // 막대가 세로로
@@ -168,10 +213,84 @@ class _ResultBarsState extends State<ResultBars> {
                 padding: 0,
               ),
             ),
-            Flexible(flex: 2, child: Text('else',textAlign: TextAlign.center,)),
+            Flexible(flex: 2, child: Text('캔',textAlign: TextAlign.center,)),
           ],),
+          /*
+          * 유리병으로 분류된 쓰레기 Bar
+          * */
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Flexible(
+                flex: 8,
+                child: StepProgressIndicator(
+                  roundedEdges: Radius.circular(10),
+                  size: 10,
+                  totalSteps: total,
+                  currentStep: GlassList.length,
+                  unselectedColor: Color(0x28000000),
+                  selectedColor: Colors.green,
+                  direction: Axis.vertical,             // 막대가 세로로
+                  progressDirection: TextDirection.rtl, // 선택된 색이 아래로
+                  padding: 0,
+                ),
+              ),
+              Flexible(flex: 2, child: Text('유리병',textAlign: TextAlign.center,)),
+            ],),
+          /*
+          * 종이로 분류된 쓰레기 Bar
+          * */
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Flexible(
+                flex: 8,
+                child: StepProgressIndicator(
+                  roundedEdges: Radius.circular(10),
+                  size: 10,
+                  totalSteps: total,
+                  currentStep: PaperList.length,
+                  unselectedColor: Color(0x28000000),
+                  selectedColor: Colors.green,
+                  direction: Axis.vertical,             // 막대가 세로로
+                  progressDirection: TextDirection.rtl, // 선택된 색이 아래로
+                  padding: 0,
+                ),
+              ),
+              Flexible(flex: 2, child: Text('종이',textAlign: TextAlign.center,)),
+            ],),
+          /*
+          * 기준 분류와 다르게 분류된 쓰레기 Bar
+          * */
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Flexible(
+                flex: 8,
+                child: StepProgressIndicator(
+                  roundedEdges: Radius.circular(10),
+                  size: 10,
+                  totalSteps: total,
+                  currentStep: ElseList.length,
+                  unselectedColor: Color(0x28000000),
+                  selectedColor: Colors.green,
+                  direction: Axis.vertical,             // 막대가 세로로
+                  progressDirection: TextDirection.rtl, // 선택된 색이 아래로
+                  padding: 0,
+                ),
+              ),
+              Flexible(flex: 2, child: Text('else',textAlign: TextAlign.center,)),
+            ],),
+
       ],),
     );
+  }
+}
+
+int calcTotal(){
+  int sum = MainList.length + ElseList.length + CanList.length + GlassList.length + PaperList.length;
+  if(sum > 0){
+    return sum;
+  }
+  else{
+    return 1;
   }
 }
 
@@ -239,22 +358,12 @@ final TrashList = [
   {"type": "plastic", "explanation": "오염물을 제거해야 합니다."},
   {"type": "glass", "explanation": "잘못된 분류입니다."},
 ];
-// 위의 리스트가 아래 두개로 분류됨.
-// explanation == NULL
-final MainList = [
-  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
-  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
-  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
-  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
-  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
-  // {"type": "plastic", "explanation": "NULL", "image": "assets/images/paper.png"},
-];
-final ElseList = [
-  // {"type": "can", "explanation": "잘못된 분류입니다.", "image": "assets/images/paper.png"},
-  // {"type": "can", "explanation": "잘못된 분류입니다.", "image": "assets/images/paper.png"},
-  // {"type": "plastic", "explanation": "오염물을 제거해야 합니다.", "image": "assets/images/paper.png"},
-  // {"type": "glass", "explanation": "잘못된 분류입니다.", "image": "assets/images/paper.png"},
-];
+
+final MainList = [];
+final ElseList = [];
+final CanList = [];
+final GlassList = [];
+final PaperList = [];
 
 class CorrectPanel extends StatefulWidget {
   const CorrectPanel({super.key});
@@ -266,6 +375,9 @@ class CorrectPanel extends StatefulWidget {
 class _CorrectPanelState extends State<CorrectPanel> {
   bool _expanded1 = false;
   bool _expanded2 = false;
+  bool _expanded3 = false;
+  bool _expanded4 = false;
+  bool _expanded5 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -295,8 +407,74 @@ class _CorrectPanelState extends State<CorrectPanel> {
                 ),
               );
             },
-            body: CorrectContainer(),
+            body: CorrectContainer(MainList),
             isExpanded: _expanded1,
+          ),
+          ExpansionPanel(
+            canTapOnHeader: true, // 아래 화살표 이외의 부분을 눌러도 가능하게
+            headerBuilder: (context, isExpanded) {return
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Container(margin:EdgeInsets.only(left: 20),
+                        child: Icon(Icons.circle, color: Colors.green, size: 18,)),
+                    Flexible(fit: FlexFit.tight, child: Container(
+                        padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Text('캔', style: TextStyle(fontSize: 18))
+                    ),),
+
+                    Text('${CanList.length}개'),
+                  ],
+                ),
+              );
+            },
+            body: CorrectContainer(CanList),
+            isExpanded: _expanded2,
+          ),
+          ExpansionPanel(
+            canTapOnHeader: true, // 아래 화살표 이외의 부분을 눌러도 가능하게
+            headerBuilder: (context, isExpanded) {return
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Container(margin:EdgeInsets.only(left: 20),
+                        child: Icon(Icons.circle, color: Colors.green, size: 18,)),
+                    Flexible(fit: FlexFit.tight, child: Container(
+                        padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Text('유리병', style: TextStyle(fontSize: 18))
+                    ),),
+
+                    Text('${GlassList.length}개'),
+                  ],
+                ),
+              );
+            },
+            body: CorrectContainer(GlassList),
+            isExpanded: _expanded3,
+          ),
+          ExpansionPanel(
+            canTapOnHeader: true, // 아래 화살표 이외의 부분을 눌러도 가능하게
+            headerBuilder: (context, isExpanded) {return
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Container(margin:EdgeInsets.only(left: 20),
+                        child: Icon(Icons.circle, color: Colors.green, size: 18,)),
+                    Flexible(fit: FlexFit.tight, child: Container(
+                        padding: EdgeInsets.only(left: 10), margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Text('종이', style: TextStyle(fontSize: 18))
+                    ),),
+
+                    Text('${PaperList.length}개'),
+                  ],
+                ),
+              );
+            },
+            body: CorrectContainer(PaperList),
+            isExpanded: _expanded4,
           ),
           ExpansionPanel(
             canTapOnHeader: true,
@@ -315,7 +493,7 @@ class _CorrectPanelState extends State<CorrectPanel> {
               ),
             );},
             body: IncorrectContainer(),
-            isExpanded: _expanded2,
+            isExpanded: _expanded5,
           ),
         ],
         expansionCallback: (panelIndex, isExpanded) {
@@ -325,6 +503,15 @@ class _CorrectPanelState extends State<CorrectPanel> {
             }
             if(panelIndex == 1){
               _expanded2 = !_expanded2;
+            }
+            if(panelIndex == 2){
+              _expanded3 = !_expanded3;
+            }
+            if(panelIndex == 3){
+              _expanded4 = !_expanded4;
+            }
+            if(panelIndex == 4){
+              _expanded5 = !_expanded5;
             }
           });
         },
@@ -339,8 +526,8 @@ class _CorrectPanelState extends State<CorrectPanel> {
 * 쓰레기 정보 = {type, explanation, img}
 * */
 class CorrectContainer extends StatefulWidget {
-  const CorrectContainer({super.key});
-
+  final List<dynamic> list;
+  const CorrectContainer(this.list, {Key? key}):super(key: key);
   @override
   State<CorrectContainer> createState() => _CorrectContainerState();
 }
@@ -349,11 +536,11 @@ class _CorrectContainerState extends State<CorrectContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: (MainList.length / 3).ceil() * (MediaQuery.of(context).size.width/3), // 한 행에 들어가는 위젯이 3개일 때
+      height: (widget.list.length / 3).ceil() * (MediaQuery.of(context).size.width/3), // 한 행에 들어가는 위젯이 3개일 때
       padding: EdgeInsets.all(10),
       child: GridView.builder(
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: MainList.length,
+        itemCount: widget.list.length,
 
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,        // 한 행에 들어갈 위젯 수
@@ -372,9 +559,9 @@ class _CorrectContainerState extends State<CorrectContainer> {
             ),
             child: Column(
               children: [
-                Text('${MainList[index]["type"]}'),
+                Text('${widget.list[index]["type"]}'),
                 Image.file(
-                  File(MainList[index]["image"]!),
+                  File(widget.list[index]["image"]!),
                 ),
               ],
             ),
