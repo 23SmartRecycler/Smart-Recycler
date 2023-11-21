@@ -433,6 +433,7 @@ class _YoloImageV8State extends State<YoloPollution> {
   }
 
   Future<void> yoloOnFrame(CameraImage cameraImage) async {
+
     final result = await widget.vision.yoloOnFrame(
         bytesList: cameraImage.planes.map((plane) => plane.bytes).toList(),
         imageHeight: cameraImage.height,
@@ -440,9 +441,7 @@ class _YoloImageV8State extends State<YoloPollution> {
         iouThreshold: 0.4,
         confThreshold: 0.4,
         classThreshold: 0.5);
-    result.forEach((element) {
-      element["image"] = cameraImage;
-    });
+
     if (result.isNotEmpty) {
       setState(() {
         yoloResults = result;

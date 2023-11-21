@@ -15,12 +15,46 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, int> plastics;
+    Map<String, int> pollutions;
+
+    setPolluted();
     setResult();
     return Scaffold(
       body: Result(),
     );
   }
+  void setPolluted(){
+    result.forEach((element) {
+      //한번 캡쳐할 때 있던 애들
+      /**
+       *  element = 한번 찍을 때 있던 요소들 [{box, tag, image} , {box, tag, image}]
+       *  feachers = 하나의 바운딩 박스
+       * **/
 
+      element.forEach((feachers) {
+        feachers["polluted"] = false;
+        if (feachers["tag"] == "plastic") {
+          element.forEach((others) {
+            if (others["tag"] == "plastic_pollution" ||
+                others["tag"] == "plastic_sticker" ||
+                others["tag"] == "paper") {
+              print("find ${others["tag"]}!!!!");
+              print(others["box"]);
+              double midx = (others["box"][2] + others["box"][0]) / 2;
+              double midy = (others["box"][3] + others["box"][1]) / 2;
+              print("midx : $midx  midy : $midy ");
+              if (midx > feachers["box"][0] && midx < feachers["box"][2] &&
+                  midy > feachers["box"][1] && midy < feachers["box"][3]) {
+                feachers["polluted"] = true;
+              }
+            }
+          });
+        }
+      });
+    });
+
+  }
   void setResult(){
     /**
     * 잘 전달 받았는지 확인
@@ -48,32 +82,36 @@ class ResultPage extends StatelessWidget {
       /**
        *  box, tag, image
        * **/
-      bool isPolluted = false;
       String type = "";
-      String explanation = "NULL";
-      //CameraImage image = element[0]["image"];
       String i = image[idx];
-      print("idx : ${idx}");
-      print("i : ${i}");
-      element.forEach((element) {
-        if(element["tag"]=="plastic"){
-          type = element["tag"];
-          //image = element["image"];
-        }
-        else{
-          isPolluted = true;
-          explanation = "오염물을 제거해야 합니다.";
+
+      element.forEach((feachers) {
+        String explanation = "NULL";
+
+        if(feachers["tag"]!="plastic_pollution" && feachers["tag"] != "plastic_sticker"){
+          if(feachers["polluted"] == true){
+            explanation = "오염물을 제거해야 합니다.";
+          }
+          type = feachers["tag"];
+
+          if(feachers["polluted"]){
+            ElseList.add({"type": type, "explanation": explanation, "image" : i});
+          }
+          else{
+            MainList.add({"type": type, "explanation": explanation, "image" : i});
+          }
         }
       });
-      if(isPolluted){
-        ElseList.add({"type": type, "explanation": explanation, "image" : i});
-      }
-      else{
-        MainList.add({"type": type, "explanation": explanation, "image" : i});
-      }
       idx++;
     });
 
+  }
+
+
+  bool checkPollution(){
+
+
+    return true;
   }
 }
 
@@ -117,6 +155,7 @@ class ResultBars extends StatefulWidget {
 }
 
 class _ResultBarsState extends State<ResultBars> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -128,7 +167,7 @@ class _ResultBarsState extends State<ResultBars> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.black12, style: BorderStyle.solid)
       ),
-      child: const Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           /*
           * 기준 분류와 동일한 쓰레기 Bar
@@ -140,8 +179,8 @@ class _ResultBarsState extends State<ResultBars> {
               child: StepProgressIndicator(
                 roundedEdges: Radius.circular(10),
                 size: 10,
-                totalSteps: 10,
-                currentStep: 6,
+                totalSteps: MainList.length + ElseList.length,
+                currentStep: MainList.length,
                 unselectedColor: Color(0x28000000),
                 selectedColor: Colors.green,
                 direction: Axis.vertical,
@@ -161,8 +200,8 @@ class _ResultBarsState extends State<ResultBars> {
               child: StepProgressIndicator(
                 roundedEdges: Radius.circular(10),
                 size: 10,
-                totalSteps: 10,
-                currentStep: 4,
+                totalSteps: MainList.length + ElseList.length,
+                currentStep: ElseList.length,
                 unselectedColor: Color(0x28000000),
                 selectedColor: Colors.green,
                 direction: Axis.vertical,             // 막대가 세로로
