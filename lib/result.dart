@@ -42,8 +42,8 @@ class ResultPage extends StatelessWidget {
     /**
     * TrashList로 변경
     * */
+    int idx = 0;
     result.forEach((element) {
-      int idx = 0;
       //한번 캡쳐할 때 있던 애들
       /**
        *  box, tag, image
@@ -52,8 +52,9 @@ class ResultPage extends StatelessWidget {
       String type = "";
       String explanation = "NULL";
       //CameraImage image = element[0]["image"];
-      String i = image[idx++];
-
+      String i = image[idx];
+      print("idx : ${idx}");
+      print("i : ${i}");
       element.forEach((element) {
         if(element["tag"]=="plastic"){
           type = element["tag"];
@@ -70,6 +71,7 @@ class ResultPage extends StatelessWidget {
       else{
         MainList.add({"type": type, "explanation": explanation, "image" : i});
       }
+      idx++;
     });
 
   }
