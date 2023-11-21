@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
@@ -15,8 +14,6 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, int> plastics;
-    Map<String, int> pollutions;
 
     setPolluted();
     setResult();
@@ -164,7 +161,7 @@ class _ResultBarsState extends State<ResultBars> {
 
   @override
   Widget build(BuildContext context) {
-    int total = MainList.length + ElseList.length + CanList.length + GlassList.length + PaperList.length;
+    int total = calcTotal();
     return Container(
       margin: EdgeInsets.all(30), padding: EdgeInsets.all(10),
       height: 250,
@@ -284,6 +281,16 @@ class _ResultBarsState extends State<ResultBars> {
 
       ],),
     );
+  }
+}
+
+int calcTotal(){
+  int sum = MainList.length + ElseList.length + CanList.length + GlassList.length + PaperList.length;
+  if(sum > 0){
+    return sum;
+  }
+  else{
+    return 1;
   }
 }
 

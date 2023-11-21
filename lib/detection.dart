@@ -9,11 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:smartrecycler/result.dart';
 
-import 'package:image/image.dart' as imglib;
-import 'package:camera/camera.dart';
 
 
 enum Options { none, imagev8, frame, tesseract, vision }
@@ -136,6 +133,8 @@ class YoloClassify extends StatefulWidget {
 class _YoloVideoState extends State<YoloClassify> {
   late CameraController controller;
   late List<Map<String, dynamic>> yoloResults;
+  late List<List<Map<String,dynamic>>> result = [];
+  late List<XFile> images = [];
   CameraImage? cameraImage;
   bool isLoaded = false;
   bool isDetecting = false;
@@ -189,35 +188,42 @@ class _YoloVideoState extends State<YoloClassify> {
         Positioned(
           bottom: 75,
           width: MediaQuery.of(context).size.width,
-          child: Container(
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                  width: 5, color: Colors.white, style: BorderStyle.solid),
-            ),
-            child: isDetecting
-                ? IconButton(
-              onPressed: () async {
-                stopDetection();
-              },
-              icon: const Icon(
-                Icons.stop,
-                color: Colors.red,
+          child: Column(
+            children: [
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      width: 5, color: Colors.white, style: BorderStyle.solid),
+                ),
+                child: isDetecting
+                    ? IconButton(
+                  onPressed: () async {
+                    stopDetection();
+                  },
+                  icon: const Icon(
+                    Icons.stop,
+                    color: Colors.red,
+                  ),
+                  iconSize: 50,
+                )
+                    : IconButton(
+                  onPressed: () async {
+                    await startDetection();
+                  },
+                  icon: const Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                  iconSize: 50,
+                ),
               ),
-              iconSize: 50,
-            )
-                : IconButton(
-              onPressed: () async {
-                await startDetection();
-              },
-              icon: const Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-              ),
-              iconSize: 50,
-            ),
+              TextButton(onPressed: () async{
+                capture();
+              }, child: Text("Capture")),
+            ],
           ),
         ),
       ],
@@ -252,6 +258,10 @@ class _YoloVideoState extends State<YoloClassify> {
   }
 
   Future<void> startDetection() async {
+    yoloResults.clear();
+    result.clear();
+    images.clear();
+
     setState(() {
       isDetecting = true;
     });
@@ -264,10 +274,38 @@ class _YoloVideoState extends State<YoloClassify> {
   }
 
   Future<void> stopDetection() async {
-    setState(() {
-      isDetecting = false;
-      yoloResults.clear();
+    final List<List<Map<String,dynamic>>> r = result;
+    final List<String> i = [];
+    images.forEach((element) {
+      i.add(element.path);
     });
+
+    if(isDetecting){
+      setState(() {
+        isDetecting = false;
+        Navigator.push(context,
+            MaterialPageRoute(
+                builder: (context) => ResultPage(r,i))
+        );
+      });
+    }
+  }
+
+  void capture() async {
+    if(isDetecting){
+      if(yoloResults.isNotEmpty){
+        result.add(yoloResults);
+        print(yoloResults);
+        final image = await controller.takePicture();
+        images.add(image);
+        print("success capture");
+        print("yoloResults : ");
+        print(yoloResults);
+        print("image : ");
+        print(image);
+      }
+      else print("yoloResult is Empty");
+    }
   }
 
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
@@ -468,9 +506,6 @@ class _YoloImageV8State extends State<YoloPollution> {
 
   }
 
-  Future<void> takePicture() async {
-    final image = controller.takePicture();
-  }
 
   Future<void> stopDetection() async {
     if(result.isNotEmpty){
@@ -498,15 +533,10 @@ class _YoloImageV8State extends State<YoloPollution> {
     if(isDetecting){
       setState(() {
         isDetecting = false;
-        //여기에 보내는 명령어 필요
-
-
-
         Navigator.push(context,
             MaterialPageRoute(
                 builder: (context) => ResultPage(r,i))
         );
-
       });
     }
   }
