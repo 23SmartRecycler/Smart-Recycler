@@ -461,7 +461,7 @@ class _YoloImageV8State extends State<YoloPollution> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/new_float32_N.tflite',
+        modelPath: 'assets/pollution_detection_model.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
