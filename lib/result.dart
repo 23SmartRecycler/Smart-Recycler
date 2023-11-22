@@ -142,10 +142,10 @@ class MyClipper extends CustomClipper<Path>{
     print(box);
     Path path  = Path();
 
-    path.moveTo(box[0]*factorX, box[1]*factorY);
-    path.lineTo(box[0]*factorX, box[3]*factorY);
-    path.lineTo(box[2]*factorX, box[3]*factorY);
-    path.lineTo(box[2]*factorX, box[1]*factorY);
+    path.moveTo(box[0]*factorX/2, box[1]*factorY*0.6);
+    path.lineTo(box[0]*factorX/2, box[3]*factorY*0.6);
+    path.lineTo(box[2]*factorX/2, box[3]*factorY*0.6);
+    path.lineTo(box[2]*factorX/2, box[1]*factorY*0.6);
     path.close();
     // path.moveTo((box[4])*size.width, (box[1]/box[5]) *size.height);
     // path.lineTo((box[0]/box[4])*size.width, (box[3]/box[5])*size.height);
@@ -656,6 +656,8 @@ class CorrectContainer extends StatefulWidget {
 class _CorrectContainerState extends State<CorrectContainer> {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Container(
       height: (widget.list.length / 1.5).ceil() * (MediaQuery.of(context).size.width / 1.7), // 한 행에 들어가는 위젯이 3개일 때
       padding: EdgeInsets.all(10),
@@ -677,18 +679,21 @@ class _CorrectContainerState extends State<CorrectContainer> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
-              children: [
-                Text('${widget.list[index]["type"]}'),
-                Container(margin: EdgeInsets.all(10),
-                  width: (MediaQuery.of(context).size.width/4),
-                  child: Image.file(
-                    File(widget.list[index]["image"]!),
+                children: [
+                  Text('${widget.list[index]["type"]}'),
+                  ClipPath(
+                    clipper: MyClipper(widget.list[index]["box"], width, height),
+                    child: Container(margin: EdgeInsets.all(10),
+                      width: (MediaQuery.of(context).size.width/4),
+                      child: Image.file(
+                        File(widget.list[index]["image"]!),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
     );
   }
 }
