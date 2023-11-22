@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -141,11 +142,12 @@ class MyClipper extends CustomClipper<Path>{
     print(box);
     Path path  = Path();
 
-    // path.moveTo(box[0]*factorX, box[1]*factorY);
-    // path.lineTo(box[0]*factorX, box[1]*factorY+ box[3]*factorY);
-    // path.lineTo(box[2]*factorX, box[1]*factorY+ box[3]*factorY);
-    // path.lineTo(box[2]*factorX, box[1]*factorY);
-    // path.moveTo((/box[4])*size.width, (box[1]/box[5]) *size.height);
+    path.moveTo(box[0]*factorX, box[1]*factorY);
+    path.lineTo(box[0]*factorX, box[3]*factorY);
+    path.lineTo(box[2]*factorX, box[3]*factorY);
+    path.lineTo(box[2]*factorX, box[1]*factorY);
+    path.close();
+    // path.moveTo((box[4])*size.width, (box[1]/box[5]) *size.height);
     // path.lineTo((box[0]/box[4])*size.width, (box[3]/box[5])*size.height);
     // path.lineTo((box[2]/box[4])*size.width, (box[3]/box[5])*size.height);
     // path.lineTo((box[2]/box[4])*size.width, (box[1]/box[5])*size.height);
@@ -156,7 +158,6 @@ class MyClipper extends CustomClipper<Path>{
   bool shouldReclip(covariant CustomClipper<Path> oldClipper){
     return true;
   }
-
 
 }
 
@@ -722,12 +723,22 @@ class _IncorrectContainerState extends State<IncorrectContainer> {
                 /*
                 * 이미지가 들어갈 컨테이너
                 * */
-                Container(margin: EdgeInsets.all(10),width: (MediaQuery.of(context).size.width/3),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.black12
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: ClipPath(
+                      clipper: MyClipper(ElseList[index]["box"], width, height),
+                    child: Container(
+                      width: (MediaQuery.of(context).size.width/3),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(File(ElseList[index]["image"]!))
+                        ),
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white
+                      ),
                     ),
-                  child: ClipPath(child: Image.file(File(ElseList[index]["image"]!)),clipper: MyClipper(ElseList[index]["box"], width, height),)
+                  ),
                 ),
                 /*
                 * 분류와 설명
@@ -745,5 +756,3 @@ class _IncorrectContainerState extends State<IncorrectContainer> {
     );
   }
 }
-
-

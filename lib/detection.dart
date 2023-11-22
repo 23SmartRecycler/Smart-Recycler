@@ -523,21 +523,20 @@ class _YoloImageV8State extends State<YoloPollution> {
     }
     final List<List<Map<String,dynamic>>> r = result;
     final List<String> i = [];
-    images.forEach((element) {
+    for (var element in images) {
       i.add(element.path);
-    });
-
-    print("r : ");
-    print(r);
-    print("i : ");
-    print(i);
+    }
     if(isDetecting){
       setState(() {
         isDetecting = false;
-        Navigator.push(context,
-            MaterialPageRoute(
-                builder: (context) => ResultPage(r,i))
-        );
+        if(r.isNotEmpty&&i.isNotEmpty){
+          print("r : $r");
+          print("i : $i");
+          Navigator.push(context,
+              MaterialPageRoute(
+                  builder: (context) => ResultPage(r,i))
+          );
+        }
       });
     }
   }
@@ -550,10 +549,8 @@ class _YoloImageV8State extends State<YoloPollution> {
         final image = await controller.takePicture();
         images.add(image);
         print("success capture");
-        print("yoloResults : ");
-        print(yoloResults);
-        print("image : ");
-        print(image);
+        print("yoloResults : $yoloResults ");
+        print("image : $image");
       }
       else print("yoloResult is Empty");
     }
