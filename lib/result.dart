@@ -1,9 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:step_progress_indicator/step_progress_indicator.dart';
-
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
+
+import 'ContentPage/contentPage.dart';
+import 'UserPage/userRetrofit/User.dart';
+import 'UserPage/userRetrofit/UserRepository.dart';
 
 class ResultPage extends StatelessWidget {
   final List<List<Map<String, dynamic>>> result;
@@ -163,6 +169,34 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
+
+  static final storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic userInfo = '';
+
+  late final UserRepository _UserRepository;
+
+  @override
+  void initState() {
+    Dio dio = Dio();
+
+    _UserRepository = UserRepository(dio);
+
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+
+    super.initState();
+  }
+
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    userInfo = await storage.read(key: 'login');
+    if (userInfo != null) {
+      return userInfo;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,7 +208,9 @@ class _ResultState extends State<Result> {
           ),
         ),
         title: Text('결과',style: TextStyle(color: Colors.black,fontFamily: 'Pretendard',fontWeight: FontWeight.w600)),
-        actions: [TextButton(onPressed: (){}, child: Text('New', style: TextStyle(color: Colors.green),))],
+        actions: [TextButton(onPressed: (){
+          goMain();
+        }, child: Text('New', style: TextStyle(color: Colors.green),))],
       ),
       body: ListView(children: [
         ResultBars(),
@@ -182,6 +218,11 @@ class _ResultState extends State<Result> {
         ResultPoints(),
       ],)
     );
+  }
+  void goMain() async {
+    int uid = int.parse(await _asyncMethod());
+    Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Cont(uid: uid,)),);
   }
 }
 
@@ -368,6 +409,35 @@ class ResultPoints extends StatefulWidget {
 }
 
 class _ResultPointsState extends State<ResultPoints> {
+
+  static final storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic userInfo = '';
+
+  late final UserRepository _UserRepository;
+
+  @override
+  void initState() {
+    Dio dio = Dio();
+
+    _UserRepository = UserRepository(dio);
+
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+      update();
+    });
+
+    super.initState();
+  }
+
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    userInfo = await storage.read(key: 'login');
+    if (userInfo != null) {
+      return userInfo;
+    }
+  }
   int cntCorrect = MainList.length + CanList.length + GlassList.length + PaperList.length;
   @override
   Widget build(BuildContext context) {
@@ -378,6 +448,31 @@ class _ResultPointsState extends State<ResultPoints> {
         style: TextStyle(color: Colors.green,fontSize: 23),)
     );
   }
+
+  void update() async { // 포인트 갱신하기
+    int uid = int.parse(await _asyncMethod());
+    final update = await _UserRepository.updatePoint(uid, -(cntCorrect-ElseList.length)*100);
+    var logger = Logger();
+    logger.d(update.toString());
+    if(!update){
+      Fluttertoast.showToast(
+          msg: '포인트 갱신 실패',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }else{
+      Fluttertoast.showToast(
+          msg: '포인트 갱신 성공!',
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          fontSize: 20,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    }
+  }
+
 }
 
 /*
