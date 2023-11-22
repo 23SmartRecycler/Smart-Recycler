@@ -91,6 +91,9 @@ class ResultPage extends StatelessWidget {
         String explanation = "NULL";
 
         if(feachers["tag"]!="plastic_pollution" && feachers["tag"] != "plastic_sticker"){
+
+          ClipPath(child: Image.file(File(i)),clipper: MyClipper(),);
+
           if(feachers["polluted"] == true){
             explanation = "오염물을 제거해야 합니다.";
           }
@@ -116,7 +119,27 @@ class ResultPage extends StatelessWidget {
       idx++;
     });
   }
+
 }
+
+class MyClipper extends CustomClipper<Path>{
+  @override
+  Path getClip(Size size){
+    Path path  = Path();
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0.0);
+    path.lineTo(size.width, size.height);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper){
+    return true;
+  }
+
+
+}
+
 
 class Result extends StatefulWidget {
   const Result({super.key});
@@ -331,12 +354,13 @@ class ResultPoints extends StatefulWidget {
 }
 
 class _ResultPointsState extends State<ResultPoints> {
+  int cntCorrect = MainList.length + CanList.length + GlassList.length + PaperList.length;
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       margin: EdgeInsets.only(top: 100),
-      child: Text('230 Point획득!!',
+      child: Text('${(cntCorrect - ElseList.length)*100} Point획득!!',
         style: TextStyle(color: Colors.green,fontSize: 23),)
     );
   }
@@ -536,7 +560,7 @@ class _CorrectContainerState extends State<CorrectContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: (widget.list.length / 3).ceil() * (MediaQuery.of(context).size.width/3), // 한 행에 들어가는 위젯이 3개일 때
+      height: (widget.list.length / 1.5).ceil() * (MediaQuery.of(context).size.width / 1.7), // 한 행에 들어가는 위젯이 3개일 때
       padding: EdgeInsets.all(10),
       child: GridView.builder(
         physics: const NeverScrollableScrollPhysics(),
@@ -544,30 +568,30 @@ class _CorrectContainerState extends State<CorrectContainer> {
 
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,        // 한 행에 들어갈 위젯 수
-          childAspectRatio: 1/2,    // 위젯의 가로 세로 비율
+          childAspectRatio: 1/1.9,    // 위젯의 가로 세로 비율
           crossAxisSpacing: 20,     // 한 행의 위젯 간 간격 -> 이걸로 위젯 크기 조절
           mainAxisSpacing: 20,      // 한 열의 위젯 간 간격
+
         ),
 
-        itemBuilder: (context, index) => AspectRatio(
-          aspectRatio: 1/1,
-          child: Container(
+        itemBuilder: (context, index) => Container(
             decoration: BoxDecoration(
               color: Colors.black12,
               borderRadius: BorderRadius.circular(20),
-
             ),
             child: Column(
               children: [
                 Text('${widget.list[index]["type"]}'),
-                Image.file(
-                  File(widget.list[index]["image"]!),
+                Container(margin: EdgeInsets.all(10),
+                  width: (MediaQuery.of(context).size.width/4),
+                  child: Image.file(
+                    File(widget.list[index]["image"]!),
+                  ),
                 ),
               ],
             ),
           ),
         ),
-      )
     );
   }
 }
