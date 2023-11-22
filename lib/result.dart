@@ -89,10 +89,8 @@ class ResultPage extends StatelessWidget {
 
       element.forEach((feachers) {
         String explanation = "NULL";
-
+        List<double> box = [feachers["box"][0],feachers["box"][1],feachers["box"][2],feachers["box"][3],0.5, 0.6];
         if(feachers["tag"]!="plastic_pollution" && feachers["tag"] != "plastic_sticker"){
-
-          ClipPath(child: Image.file(File(i)),clipper: MyClipper(),);
 
           if(feachers["polluted"] == true){
             explanation = "오염물을 제거해야 합니다.";
@@ -100,19 +98,19 @@ class ResultPage extends StatelessWidget {
           type = feachers["tag"];
 
           if(feachers["polluted"]){
-            ElseList.add({"type": type, "explanation": explanation, "image" : i});
+            ElseList.add({"type": type, "explanation": explanation, "image" : i, "box": box});
           }
           else if (feachers["tag"] == "plastic"){
-            MainList.add({"type": type, "explanation": explanation, "image" : i});
+            MainList.add({"type": type, "explanation": explanation, "image" : i, "box": box});
           }
           else if (feachers["tag"] == "can"){
-            CanList.add({"type": type, "explanation": explanation, "image" : i});
+            CanList.add({"type": type, "explanation": explanation, "image" : i, "box": box});
           }
           else if (feachers["tag"] == "glass"){
-            GlassList.add({"type": type, "explanation": explanation, "image" : i});
+            GlassList.add({"type": type, "explanation": explanation, "image" : i, "box": box});
           }
           else {
-            PaperList.add({"type": type, "explanation": explanation, "image" : i});
+            PaperList.add({"type": type, "explanation": explanation, "image" : i, "box": box});
           }
         }
       });
@@ -122,13 +120,29 @@ class ResultPage extends StatelessWidget {
 
 }
 
+
 class MyClipper extends CustomClipper<Path>{
+  late List<double> box = [];
+  late double width;
+  late double height;
+  MyClipper(this.box, this.width, this.height);
+
   @override
   Path getClip(Size size){
+    double factorX = size.width/width;
+    double factorY = size.height/height;
+    print("getClip :::: box:");
+    print(box);
     Path path  = Path();
-    path.moveTo(0, 0);
-    path.lineTo(size.width, 0.0);
-    path.lineTo(size.width, size.height);
+
+    // path.moveTo(box[0]*factorX, box[1]*factorY);
+    // path.lineTo(box[0]*factorX, box[1]*factorY+ box[3]*factorY);
+    // path.lineTo(box[2]*factorX, box[1]*factorY+ box[3]*factorY);
+    // path.lineTo(box[2]*factorX, box[1]*factorY);
+    // path.moveTo((/box[4])*size.width, (box[1]/box[5]) *size.height);
+    // path.lineTo((box[0]/box[4])*size.width, (box[3]/box[5])*size.height);
+    // path.lineTo((box[2]/box[4])*size.width, (box[3]/box[5])*size.height);
+    // path.lineTo((box[2]/box[4])*size.width, (box[1]/box[5])*size.height);
     return path;
   }
 
@@ -370,19 +384,6 @@ class _ResultPointsState extends State<ResultPoints> {
 * json 형식의 detecting 한 쓰레기들 정보
 * ++++++++++++++++++++ img 정보 추가해야함.
 * */
-final TrashList = [
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "plastic", "explanation": "NULL"},
-  {"type": "can", "explanation": "잘못된 분류입니다."},
-  {"type": "can", "explanation": "잘못된 분류입니다."},
-  {"type": "plastic", "explanation": "오염물을 제거해야 합니다."},
-  {"type": "glass", "explanation": "잘못된 분류입니다."},
-];
-
 final MainList = [];
 final ElseList = [];
 final CanList = [];
@@ -611,6 +612,8 @@ class IncorrectContainer extends StatefulWidget {
 class _IncorrectContainerState extends State<IncorrectContainer> {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Container(
       height: (ElseList.length) * (MediaQuery.of(context).size.width/3), // 한 행에 들어가는 위젯이 3개일 때
       child: ListView.builder(
@@ -629,7 +632,7 @@ class _IncorrectContainerState extends State<IncorrectContainer> {
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.black12
                     ),
-                  child: Image.file(File(ElseList[index]["image"]!)),
+                  child: ClipPath(child: Image.file(File(ElseList[index]["image"]!)),clipper: MyClipper(ElseList[index]["box"], width, height),)
                 ),
                 /*
                 * 분류와 설명
