@@ -13,7 +13,7 @@ import 'package:smartrecycler/result.dart';
 
 
 
-enum Options { none, imagev8, frame, tesseract, vision }
+enum Options { none, frame, tesseract, vision }
 
 late List<CameraDescription> cameras;
 
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
     if (option == Options.frame||widget.id==1) {
       return YoloClassify(vision: vision);
     }
-    if (option == Options.imagev8||widget.id==0) {
+    if (option == Options.frame||widget.id==0) {
       return YoloPollution(vision: vision);
     }
     if (option == Options.tesseract) {
@@ -233,7 +233,7 @@ class _YoloVideoState extends State<YoloClassify> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/label_class.txt',
-        modelPath: 'assets/class_detection_model.tflite',
+        modelPath: 'assets/class.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
@@ -461,7 +461,7 @@ class _YoloImageV8State extends State<YoloPollution> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/pollution_detection_model.tflite',
+        modelPath: 'assets/pollution.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
