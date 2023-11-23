@@ -138,15 +138,26 @@ class MyClipper extends CustomClipper<Path>{
   Path getClip(Size size){
     double factorX = size.width/width;
     double factorY = size.height/height;
+
     print("getClip :::: box:");
     print(box);
     Path path  = Path();
 
-    path.moveTo(box[0]*factorX/2, box[1]*factorY*0.6);
-    path.lineTo(box[0]*factorX/2, box[3]*factorY*0.6);
-    path.lineTo(box[2]*factorX/2, box[3]*factorY*0.6);
-    path.lineTo(box[2]*factorX/2, box[1]*factorY*0.6);
-    path.close();
+    if(height ==0){
+      path.moveTo(box[0]*factorX/2, 0.0);
+      path.lineTo(box[0]*factorX/2, size.height);
+      path.lineTo(box[2]*factorX/2, size.height);
+      path.lineTo(box[2]*factorX/2, 0.0);
+      path.close();
+    }
+    else{
+      path.moveTo(box[0]*factorX/2, box[1]*factorY*0.6);
+      path.lineTo(box[0]*factorX/2, box[3]*factorY*0.6);
+      path.lineTo(box[2]*factorX/2, box[3]*factorY*0.6);
+      path.lineTo(box[2]*factorX/2, box[1]*factorY*0.6);
+      path.close();
+
+    }
     return path;
   }
 
@@ -727,7 +738,7 @@ class _IncorrectContainerState extends State<IncorrectContainer> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: ClipPath(
-                      clipper: MyClipper(ElseList[index]["box"], width, height),
+                      clipper: MyClipper(ElseList[index]["box"], width, 0),
                     child: Container(
                       width: (MediaQuery.of(context).size.width/3),
                       decoration: BoxDecoration(

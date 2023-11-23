@@ -162,6 +162,7 @@ class _YoloVideoState extends State<YoloClassify> {
   @override
   void dispose() async {
     super.dispose();
+    await widget.vision.closeYoloModel();
     controller.dispose();
   }
 
@@ -387,6 +388,7 @@ class _YoloImageV8State extends State<YoloPollution> {
 
   @override
   void dispose() async {
+    await widget.vision.closeYoloModel();
     controller.dispose();
     super.dispose();
   }
@@ -461,7 +463,7 @@ class _YoloImageV8State extends State<YoloPollution> {
   Future<void> loadYoloModel() async {
     await widget.vision.loadYoloModel(
         labels: 'assets/labels.txt',
-        modelPath: 'assets/pollution.tflite',
+        modelPath: 'assets/pollution_detection_model.tflite',
         modelVersion: "yolov8",
         numThreads: 2,
         useGpu: true);
@@ -509,18 +511,7 @@ class _YoloImageV8State extends State<YoloPollution> {
 
 
   Future<void> stopDetection() async {
-    if(result.isNotEmpty){
-      print(result);
-    }
-    else {
-      print("result is Empty");
-    }
-    if(images.isNotEmpty){
-      print(images);
-    }
-    else{
-      print("image is Empty");
-    }
+
     final List<List<Map<String,dynamic>>> r = result;
     final List<String> i = [];
     for (var element in images) {
@@ -530,8 +521,6 @@ class _YoloImageV8State extends State<YoloPollution> {
       setState(() {
         isDetecting = false;
         if(r.isNotEmpty&&i.isNotEmpty){
-          print("r : $r");
-          print("i : $i");
           Navigator.push(context,
               MaterialPageRoute(
                   builder: (context) => ResultPage(r,i))
