@@ -147,10 +147,6 @@ class MyClipper extends CustomClipper<Path>{
     path.lineTo(box[2]*factorX/2, box[3]*factorY*0.6);
     path.lineTo(box[2]*factorX/2, box[1]*factorY*0.6);
     path.close();
-    // path.moveTo((box[4])*size.width, (box[1]/box[5]) *size.height);
-    // path.lineTo((box[0]/box[4])*size.width, (box[3]/box[5])*size.height);
-    // path.lineTo((box[2]/box[4])*size.width, (box[3]/box[5])*size.height);
-    // path.lineTo((box[2]/box[4])*size.width, (box[1]/box[5])*size.height);
     return path;
   }
 
@@ -675,7 +671,7 @@ class _CorrectContainerState extends State<CorrectContainer> {
 
         itemBuilder: (context, index) => Container(
             decoration: BoxDecoration(
-              color: Colors.black12,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
