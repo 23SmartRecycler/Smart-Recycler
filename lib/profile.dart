@@ -117,6 +117,9 @@ class ProfilePage extends StatelessWidget {
         FutureBuilder<User>(
             future: findUser(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if(snapshot.hasData == false){
+                return const CircularProgressIndicator();
+              }
               final User result = snapshot.data;
               String nickname ='';
               int remain = 100 -result.exp!.toInt();
