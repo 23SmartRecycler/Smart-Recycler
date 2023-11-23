@@ -58,7 +58,6 @@ class _ContentResultState extends State<ContentResult> {
             FutureBuilder<Content>(
                 future: getContent(widget.cid),
                 builder: (BuildContext context, AsyncSnapshot snapshot){
-                  final Content result = snapshot.data;
                   if (snapshot.hasData == false) {
                     return const ListTile(
                         title: Center(child: CircularProgressIndicator()));
@@ -72,6 +71,7 @@ class _ContentResultState extends State<ContentResult> {
                       ),
                     );
                   }else{
+                    final Content result = snapshot.data;
                     return Column(
                       children: <Widget>[
                         Container(
