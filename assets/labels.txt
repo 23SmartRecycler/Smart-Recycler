@@ -1,0 +1,6 @@
+plastic
+plastic_sticker
+plastic_pollution
+paper
+can
+glass
